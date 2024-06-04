@@ -13,19 +13,19 @@
 	}
 
 	onMount(() => {
-		// if(storage == '0') {
-        //     setTimeout(() => {
-        //         show_loader = false
-        //         window.sessionStorage.setItem('visitState', '1')
-		// 		window.location.replace('/home')
-        //     }, 8000)
-        // }
+		if(storage == '0') {
+            setTimeout(() => {
+                show_loader = false
+                window.sessionStorage.setItem('visitState', '1')
+				window.location.replace('/home')
+            }, 10000)
+        }
 	})
 </script>
 
 <style lang="postcss">
 	.splash_page {
-		@apply h-dvh w-full bg-splash_bg flex justify-center items-center flex-col relative;
+		@apply h-dvh w-full bg-gradient-to-t from-highlight_bg to-splash_bg to-45% flex justify-center items-center flex-col relative;
 	}
 	h1 {
 		@apply text-white text-5xl font-delap tracking-widest mb-6;
@@ -33,7 +33,7 @@
 	/* HTML: <div class="loader"></div> */
 	.loader {
 	width: 200px;
-	height: 28px;
+	height: 25px;
 	border-radius: 7px;
 	color: white;
 	border: 2px solid;
@@ -49,7 +49,7 @@
 	left: 0;
 	border-radius: inherit;
 	background: white;
-	animation: loading_bar 1.4s infinite linear;
+	animation: loading_bar 1.8s infinite linear;
 	}
 	@keyframes loading_bar {
 		50% {left:100%;transform: translateX(calc(-100% - 4px))}

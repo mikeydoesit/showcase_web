@@ -6,8 +6,10 @@
     html, body {
         max-width: 576px;
         margin: 0 auto;
-        background-color: #feffff;
         overflow-x: hidden;
+        font-family: "Rethink Sans", sans-serif;
+        font-optical-sizing: auto;
+        font-style: normal;
     }
     @font-face {
       font-family: "Africa";
