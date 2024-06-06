@@ -1,21 +1,23 @@
 <script>
     import { pocketbase } from '$lib/pocketbase'
 
-    const set_campaign_list = async () => {
-        try {
-            const campaign_list = await pocketbase.collection('campaigns').getList(1, 50, {
-                filter: `is_active = true`,
-                expand: 'merchant'
-            })
+    export let campaign_list = []
 
-            return campaign_list.items
+    // const set_campaign_list = async () => {
+    //     try {
+    //         const campaign_list = await pocketbase.collection('campaigns').getList(1, 50, {
+    //             filter: `is_active = true`,
+    //             expand: 'merchant'
+    //         })
+
+    //         return campaign_list.items
             
-        } catch (error) {
-            console.log(error)
-        }
-    }
+    //     } catch (error) {
+    //         console.log(error)
+    //     }
+    // }
 
-    let get_campaign_list = set_campaign_list()
+    // let get_campaign_list = set_campaign_list()
 </script>
 
 <style lang="postcss">
@@ -171,12 +173,12 @@
 
 </style>
 <section class="homepage_offer_cards_wide">
-    {#await get_campaign_list}
+    {#if campaign_list.length == 0}
     <div class="loader_wrapper">
         <div class="spinner"></div>
     </div>
-    {:then list}
-        {#each list as item}
+    {:else}
+        {#each campaign_list as item}
             <div class="card">
                 <div class="card_img_wrapper">
                     <img src={item.stock_images[0].url} alt={item.product_name} />
@@ -189,10 +191,14 @@
                         <h4 class="company">{item.expand.merchant.business_name}</h4>
                         <h6 class="product">{item.product_name}</h6>
                         <div class="price_wrapper">
-                            <img src="/images/checkmark.png" alt="checkmark"/>
-                            <span class="old_price"><s>GH&#8373; {item.original_price}</s></span>
-                            <span class="slash">/</span>
-                            <p class="new_price">GH&#8373; 40</p>
+                            {#if item.discount == 'BOGOF'}
+                                <p class="new_price">Buy one get one free</p>
+                            {:else}
+                                <img src="/images/checkmark.png" alt="checkmark"/>
+                                <span class="old_price"><s>GH&#8373; {item.original_price}</s></span>
+                                <span class="slash">/</span>
+                                <p class="new_price">GH&#8373; {item.original_price - ((item.original_price/100) * item.discount_value)}</p>
+                            {/if}
                         </div>
                         <div class="offer_more_info">
                             <div class="time_left_wrapper">
@@ -201,17 +207,21 @@
                             </div>
                             <div class="location_wrapper">
                                 <img src="/images/location_pin.png" alt="location" />
-                                <span class="location">Lashibi Accra</span>
+                                <span class="location">{item.expand.merchant.location} Accra</span>
                             </div>
                         </div>
                     </div>
                     <div class="offer_coupon">
                         <img src="/images/white_coupon.png" alt="coupon" />
                         <span>Save up to</span>
-                        <p>30%</p>
+                        {#if item.discount == 'BOGOF'}
+                            <p>100%</p>
+                        {:else}
+                            <p>{item.discount_value}%</p>
+                        {/if}    
                     </div>
                 </div>
             </div>
         {/each}
-    {/await}
+    {/if}
 </section>

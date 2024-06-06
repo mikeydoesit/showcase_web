@@ -8,11 +8,13 @@
     import { pocketbase } from '$lib/pocketbase'
     import { onMount } from 'svelte'
 
+    let records = []
+
     onMount(async () => {
 
         try {
 
-            const records = await pocketbase.collection('campaigns').getFullList({
+            records = await pocketbase.collection('campaigns').getFullList({
                 sort: '-created',
                 expand: 'merchant'
             });
@@ -39,7 +41,9 @@
     <SectionTitle
         title_text={'Deals near you'}
     />
-    <HomepageOfferCardsWide />
+    <HomepageOfferCardsWide 
+        campaign_list={records}
+    />
     <FullWidthLinkBtn
         link_text={'See more'}
         link_url={'#'}
