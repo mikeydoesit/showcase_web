@@ -58,7 +58,7 @@
 
 <section class="splash_page">
 	{#if show_loader}
-		<h1 transition:fade>SHOWCASE</h1>
+		<h1 transition:fade>MANGO</h1>
 		<div transition:fade class="loader"></div>
 	{/if}
 </section>
