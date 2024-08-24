@@ -4,6 +4,8 @@
     import FilterCard from "../../../../components/FilterCard.svelte";
     import FullWidthOfferCard from '../../../../components/FullWidthOfferCard.svelte'
     import { page } from '$app/stores';
+    import { onMount } from  'svelte';
+    import { pocketbase } from '$lib/pocketbase.js'
 
     let title
     let show_filter_card = false
@@ -20,6 +22,16 @@
         show_filter_card = !show_filter_card
     }
 
+    onMount(async () => {
+        try {
+            const resultList = await pocketbase.collection('campaigns').getList(1, 50, {
+                filter: `parent_category = "${title}"`,
+            });
+            console.log(resultList)
+        } catch (error) {
+            console.log(error)
+        }
+    })
 </script>
 
 <style lang="postcss">

@@ -9,17 +9,21 @@
     import { onMount } from 'svelte'
 
     let records = []
+    let feature = {}
+    let feature_img = ''
 
     onMount(async () => {
-
         try {
 
             records = await pocketbase.collection('campaigns').getFullList({
                 sort: '-created',
+                filter: 'is_active = True',
                 expand: 'merchant'
             });
 
-            console.log(records)
+            feature = records[(Math.floor(Math.random() * records.length))]
+            feature_img = feature.stock_images[(Math.floor(Math.random() * feature.stock_images.length))].url
+
 
         } catch (error) {
             console.log(error)
@@ -36,7 +40,10 @@
 </style>
 
 <main class="home_main">
-    <FeaturedSlider />
+    <FeaturedSlider
+        campaign_img={feature_img}
+        featured_campaign={feature}
+    />
     <HomepageFilterTabs />
     <SectionTitle
         title_text={'Deals near you'}
@@ -51,17 +58,11 @@
     <SectionTitle
         title_text={'Popular on Showcase'}
     />
-    <HomepageOfferCardsNarrow />
+    <HomepageOfferCardsNarrow 
+        campaign_list={records}
+    />
     <FullWidthLinkBtn
         link_text={'See more'}
         link_url={'#'}
     />
-    <!-- <SectionTitle
-        title_text={'All the deals'}
-    />
-    <HomepageOfferCardsWide />
-    <FullWidthLinkBtn
-        link_text={'See more'}
-        link_url={'#'}
-    /> -->
 </main>

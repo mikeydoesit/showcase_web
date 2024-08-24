@@ -1,5 +1,6 @@
 <script>
     import { pocketbase } from '$lib/pocketbase'
+    import { PUBLIC_POCKETBASE_URL } from '$env/static/public';
 
     export let campaign_list = []
 
@@ -91,6 +92,9 @@
     .offer_coupon {
         @apply flex flex-col items-center justify-center bg-splash_bg text-main_bg px-3 border-l-2 border-dotted rounded-br-xl;
     }
+    .offer_coupon .bogof {
+        @apply w-12 h-auto;
+    }
     .offer_coupon img {
         @apply w-6 h-6;
     }
@@ -174,24 +178,26 @@
 </style>
 <section class="homepage_offer_cards_wide">
     {#if campaign_list.length == 0}
-    <div class="loader_wrapper">
-        <div class="spinner"></div>
-    </div>
+        <div class="loader_wrapper">
+            <div class="spinner"></div>
+        </div>
     {:else}
         {#each campaign_list as item}
-            <div class="card">
+            <a href={`/product/${item.id}`} class="card">
                 <div class="card_img_wrapper">
                     <img src={item.stock_images[0].url} alt={item.product_name} />
-                    <div class="logo_wrapper">
-                        <img src="/images/drc_logo.png" alt="logo" />
-                    </div>
+                    {#if item.expand.merchant.logo != ""}
+                        <div class="logo_wrapper">
+                            <img src={`${PUBLIC_POCKETBASE_URL}/api/files/merchants/${item.expand.merchant.id}/${item.expand.merchant.logo}`} alt="logo" />
+                        </div>
+                    {/if}
                 </div>
                 <div class="offer_details_wrapper">
                     <div class="offer_details_main">
                         <h4 class="company">{item.expand.merchant.business_name}</h4>
                         <h6 class="product">{item.product_name}</h6>
                         <div class="price_wrapper">
-                            {#if item.discount == 'BOGOF'}
+                            {#if item.discount_type == 'BOGOF'}
                                 <p class="new_price">Buy one get one free</p>
                             {:else}
                                 <img src="/images/checkmark.png" alt="checkmark"/>
@@ -207,21 +213,21 @@
                             </div>
                             <div class="location_wrapper">
                                 <img src="/images/location_pin.png" alt="location" />
-                                <span class="location">{item.expand.merchant.location} Accra</span>
+                                <span class="location">{item.expand.merchant.location}</span>
                             </div>
                         </div>
                     </div>
                     <div class="offer_coupon">
-                        <img src="/images/white_coupon.png" alt="coupon" />
-                        <span>Save up to</span>
-                        {#if item.discount == 'BOGOF'}
-                            <p>100%</p>
+                        {#if item.discount_type == 'BOGOF'}
+                            <img class="bogof" src="/images/bogof_.png" alt="coupon" />
                         {:else}
+                            <img src="/images/white_coupon.png" alt="coupon" />
+                            <span>Save up to</span>
                             <p>{item.discount_value}%</p>
                         {/if}    
                     </div>
                 </div>
-            </div>
+            </a>
         {/each}
     {/if}
 </section>

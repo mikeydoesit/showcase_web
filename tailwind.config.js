@@ -14,6 +14,7 @@ export default {
       text_grey: '#75787d',
       text_primary: '#2B303A',
       black: '#2b303a',
+      red: "#FE3A3A",
       highlight_bg: '#990033',
       splash_bg: '#FF9000',
       accent_bg: '#0081AF',

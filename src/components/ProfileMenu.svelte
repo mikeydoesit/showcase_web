@@ -1,6 +1,24 @@
+<script>
+    import { goto } from '$app/navigation';
+    import { pocketbase } from '$lib/pocketbase.js'
+
+    const signout = () => {
+        try {
+            pocketbase.authStore.clear();
+        } catch (error) {
+            console.log(error)
+        } finally {
+            goto('/home');
+        }
+    }
+    const about_mango = () => {
+        goto('/about')
+    }
+</script>
+
 <style lang="postcss">
     .profile_menu {
-        @apply mt-10;
+        @apply mt-6 overflow-y-scroll h-fit;
     }
     .menu_list, .secondary_menu {
         @apply px-5;
@@ -31,17 +49,16 @@
     }
 </style>
 
-
 <section class="profile_menu">
     <ul class="menu_list">
         <li class="list_item">
-            <h6 class="list_item_title">Edit profile</h6>
+            <h6 class="list_item_title">Savings</h6>
             <div class="icon_wrapper">
                 <img src="/images/right_chevron.png" alt="chevron" />
             </div>
         </li>
         <li class="list_item">
-            <h6 class="list_item_title">Purchases</h6>
+            <h6 class="list_item_title">Redemptions</h6>
             <div class="icon_wrapper">
                 <img src="/images/right_chevron.png" alt="chevron" />
             </div>
@@ -58,12 +75,6 @@
                 <img src="/images/right_chevron.png" alt="chevron" />
             </div>
         </li>
-        <li class="list_item">
-            <h6 class="list_item_title">Terms of service</h6>
-            <div class="icon_wrapper">
-                <img src="/images/right_chevron.png" alt="chevron" />
-            </div>
-        </li>
     </ul>
     <ul class="secondary_menu">
         <li class="list_item">
@@ -72,13 +83,13 @@
                 <img src="/images/right_chevron.png" alt="chevron" />
             </div>
         </li>
-        <li class="list_item">
-            <h6 class="list_item_title">About Showcasee</h6>
+        <li class="list_item" on:click={about_mango}>
+            <h6 class="list_item_title">About Mango</h6>
             <div class="icon_wrapper">
                 <img src="/images/right_chevron.png" alt="chevron" />
             </div>
         </li>
-        <li class="list_item">
+        <li class="list_item" on:click={signout}>
             <h6 class="list_item_title">Sign out</h6>
             <div class="icon_wrapper">
                 <img src="/images/right_chevron.png" alt="chevron" />

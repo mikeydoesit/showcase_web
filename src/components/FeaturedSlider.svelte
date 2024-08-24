@@ -1,3 +1,12 @@
+<script>
+    import { onMount } from 'svelte'
+
+    export let campaign_img = ''
+
+    export let featured_campaign = {}
+
+</script>
+
 <style lang="postcss">
     .featured_slider_main {
         @apply h-80;
@@ -40,23 +49,27 @@
 <section class="featured_slider_main">
     <div class="slider_container">
         <div class="slide">
-            <img class="slide_bg_img" src="/images/drc_bumper_cars.jpeg" alt="slide_bg_img"/>
+            {#if campaign_img != ''}
+                <img class="slide_bg_img" src={campaign_img} alt={featured_campaign.product_name}/>
+            {/if}
             <div class="slide_bg_gradient_one"></div>
             <div class="slide_bg_gradient_two"></div>
             <div class="slide_content">
-                <h2 class="offer_title">Buckle up for laughs!<br/>The fun starts now.</h2>
-                <div class="offer_summary">
-                    <p class="offer_desc">Enjoy a free Bumper car pass when a pass of equal value or greater is purchased.</p>
-                    <a href="#" class="offer_link">
-                        <span>Explore</span>
-                    </a>
-                </div>
+                {#if Object.keys(featured_campaign).length > 0}
+                    <h2 class="offer_title">Buckle up for laughs!<br/>The fun starts now.</h2>
+                    <div class="offer_summary">
+                        {#if featured_campaign.discount_type == 'BOGOF'}
+                            <p class="offer_desc">Enjoy a free {featured_campaign.product_name} when a {featured_campaign.product_name} of equal value or greater is purchased.</p>
+                        {/if}
+                        {#if featured_campaign.discount_type == 'Percentage'}
+                            <p class="offer_desc">Up to {featured_campaign.discount_value}% off on {featured_campaign.product_name} at {featured_campaign.expand.merchant.business_name}.</p>
+                        {/if}
+                        <a href={`/product/${featured_campaign.id}`} class="offer_link">
+                            <span>Explore</span>
+                        </a>
+                    </div>
+                {/if}
             </div>
-        </div>
-        <div class="slide_bullets">
-            <span></span>
-            <span></span>
-            <span></span>
         </div>
     </div>
 </section>                                                                                                      

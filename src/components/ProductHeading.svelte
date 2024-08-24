@@ -1,5 +1,11 @@
 <script>
-    
+    import { PUBLIC_POCKETBASE_URL } from '$env/static/public';
+    export let seller_obj
+    export let header_img
+
+    const go_back = () => {
+        window.history.back()
+    }
 </script>
 
 <style lang="postcss">
@@ -26,13 +32,13 @@
         @apply flex flex-col justify-evenly h-[-webkit-fill-available];
     }
     .logo_wrapper {
-        @apply h-10 mb-1.5;
+        @apply h-9 my-1.5;
     }
     .logo_wrapper img {
         @apply h-full;
     }
     .merchant {
-        @apply text-splash_bg font-bold text-xl;
+        @apply text-splash_bg font-bold text-xl text-center;
     }
     .rating {
         @apply flex flex-row justify-center items-center;
@@ -67,9 +73,11 @@
 </style>
 
 <section class="product_heading">
-    <img class="bgd" src="/images/DRC_bg.jpg" alt="icon" />
+    {#if header_img}
+        <img class="bgd" src={header_img} alt="icon" />
+    {/if}
     <div class="top_icons">
-        <div class="icon_wrapper">  
+        <div class="icon_wrapper" on:click={go_back}>  
             <img src="/images/left_chevron_splash.png" alt="icon"/>
         </div>
         <div class="icon_wrapper">
@@ -79,10 +87,14 @@
     <div class="floating_card_wrapper">
         <div class="floating_card">
             <div class="logo_wrapper">
-                <img src="/images/drc_logo.png" />
+                {#if seller_obj.logo != ''}
+                    <img src={`${PUBLIC_POCKETBASE_URL}/api/files/merchants/${seller_obj.id}/${seller_obj.logo}`} alt="logo"/>
+                {/if}
             </div>
             <div class="floating_card_content">
-                <h4 class="merchant">Deon Recreational Centre</h4>
+                {#if seller_obj.business_name}
+                    <h4 class="merchant">{seller_obj.business_name}</h4>
+                {/if}
                 <div class="rating">
                     <img src="/images/star.png" alt="star" />
                     <img src="/images/star.png" alt="star" />
@@ -92,8 +104,10 @@
                 </div>
                 <div class="basic_info">
                     <div class="location_wrapper">
-                        <img src="/images/location_pin.png" />
-                        <p class="location">Accra</p>
+                        {#if seller_obj.location}
+                            <img src="/images/location_pin.png" />
+                            <p class="location">{seller_obj.location}</p>
+                        {/if}
                     </div>
                     <div class="opening_times_wrapper">
                         <img src="/images/clock.png" />

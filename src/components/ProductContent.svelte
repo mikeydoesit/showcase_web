@@ -1,3 +1,7 @@
+<script>
+    export let product_obj
+</script>
+
 <style lang="postcss">
     .product_content {
         @apply mt-36 px-4;
@@ -89,7 +93,7 @@
 <section class="product_content">
     <div class="tabs">
         <div class="tab">
-            <span>Deals</span>
+            <span>Deal</span>
         </div>
         <div class="tab">
             <span>Reviews</span>
@@ -99,79 +103,90 @@
         </div>
     </div>
     <div class="deals_tab_content">
-        <div class="deal">
-            <div class="deals_img_wrapper">
-                <img src="/images/drc_bumper_cars.jpeg" alt="deals image"/>
-            </div>
-            <h3 class="deal_title">10 minute bumper car joyride</h3>
-            <div class="time_left_wrapper">
-                <img src="/images/time.png" alt="time icon" />
-                <span class="time_left">3 days left</span>
-            </div>
-            <p class="deal_description">Enjoy a free Bumper car pass when a pass of equal value or greater is purchased.</p>
-            <div class="deals_option">
-                <h4>Purchase options:</h4>
-                <div class="option">
-                    <div class="option_details">
-                        <h5 class="option_title">10 minute bumper car joyride</h5>
-                        <div class="pricing">
-                            <div class="discount">
-                                <span>10% Off</span>
-                            </div>
-                            <div class="price">
-                                <span class="old_price"><s>GH&#8373; 50</s></span>
-                                <p class="new_price">GH&#8373; 40</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="add_btn_wrapper">
-                        <div class="add_btn_content">
-                            <img src="/images/add.png" alt="add "/>
-                            <span>Add</span>
-                        </div>
-                    </div>
+        {#if Object.keys(product_obj).length > 0}
+            <div class="deal">
+                <div class="deals_img_wrapper">
+                    <img src={product_obj.stock_images[(Math.floor(Math.random() * product_obj.stock_images.length))].url} alt="deals image"/>
                 </div>
-                <div class="option">
-                    <div class="option_details">
-                        <h5 class="option_title">10 minute bumper car joyride</h5>
-                        <div class="pricing">
-                            <div class="discount">
-                                <span>10% Off</span>
-                            </div>
-                            <div class="price">
-                                <span class="old_price"><s>GH&#8373; 50</s></span>
-                                <p class="new_price">GH&#8373; 40</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="add_btn_wrapper">
-                        <div class="add_btn_content">
-                            <img src="/images/add.png" alt="add "/>
-                            <span>Add</span>
-                        </div>
-                    </div>
+                <h3 class="deal_title">{product_obj.product_name}</h3>
+                <div class="time_left_wrapper">
+                    <img src="/images/time.png" alt="time icon" />
+                    <span class="time_left">3 days left</span>
                 </div>
-                <div class="option">
-                    <div class="option_details">
-                        <h5 class="option_title">10 minute bumper car joyride</h5>
-                        <div class="pricing">
-                            <div class="discount">
-                                <span>10% Off</span>
+                {#if product_obj.discount_type == 'BOGOF'}
+                    <p class="deal_description">Enjoy a free {product_obj.product_name} when a {product_obj.product_name} of equal value or greater is purchased.</p>
+                {/if}
+                {#if product_obj.discount_type == 'Percentage'}
+                    <p class="deal_description">Up to {product_obj.discount_value}% off on {product_obj.product_name} at {product_obj.expand.merchant.business_name}.</p>
+                {/if}
+                <div class="deals_option">
+                    <!-- <h4>Purchase options:</h4> -->
+                    <div class="option">
+                        <div class="option_details">
+                            <h5 class="option_title">{product_obj.product_name}</h5>
+                            <div class="pricing">
+                                <div class="discount">
+                                    {#if product_obj.discount_type == 'Percentage'}
+                                        <span>{product_obj.discount_value}% Off</span>
+                                    {/if}
+                                </div>
+                                <div class="price">
+                                    {#if product_obj.discount_type == 'Percentage'}
+                                        <span class="old_price"><s>GH&#8373; {product_obj.original_price}</s></span>
+                                        <p class="new_price">GH&#8373; {product_obj.original_price - ((product_obj.original_price/100) * product_obj.discount_value)}</p>
+                                    {/if}
+                                </div>
                             </div>
-                            <div class="price">
-                                <span class="old_price"><s>GH&#8373; 50</s></span>
-                                <p class="new_price">GH&#8373; 40</p>
+                        </div>
+                        <div class="add_btn_wrapper">
+                            <div class="add_btn_content">
+                                <img src="/images/add.png" alt="add "/>
+                                <span>Add</span>
                             </div>
                         </div>
                     </div>
-                    <div class="add_btn_wrapper">
-                        <div class="add_btn_content">
-                            <img src="/images/add.png" alt="add "/>
-                            <span>Add</span>
+                    <!-- <div class="option">
+                        <div class="option_details">
+                            <h5 class="option_title">10 minute bumper car joyride</h5>
+                            <div class="pricing">
+                                <div class="discount">
+                                    <span>10% Off</span>
+                                </div>
+                                <div class="price">
+                                    <span class="old_price"><s>GH&#8373; 50</s></span>
+                                    <p class="new_price">GH&#8373; 40</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="add_btn_wrapper">
+                            <div class="add_btn_content">
+                                <img src="/images/add.png" alt="add "/>
+                                <span>Add</span>
+                            </div>
                         </div>
                     </div>
+                    <div class="option">
+                        <div class="option_details">
+                            <h5 class="option_title">10 minute bumper car joyride</h5>
+                            <div class="pricing">
+                                <div class="discount">
+                                    <span>10% Off</span>
+                                </div>
+                                <div class="price">
+                                    <span class="old_price"><s>GH&#8373; 50</s></span>
+                                    <p class="new_price">GH&#8373; 40</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="add_btn_wrapper">
+                            <div class="add_btn_content">
+                                <img src="/images/add.png" alt="add "/>
+                                <span>Add</span>
+                            </div>
+                        </div>
+                    </div> -->
                 </div>
             </div>
-        </div>
+        {/if}
     </div>
 </section>

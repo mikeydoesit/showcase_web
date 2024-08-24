@@ -28,6 +28,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@paystack/inline-js": "^2.20.2",
 		"pocketbase": "^0.21.2"
 	}
 }
