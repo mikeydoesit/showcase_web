@@ -16,9 +16,6 @@
         avatar_uploader_input.set(e.target.files)
         avatar_preview_url = URL.createObjectURL($avatar_uploader_input[0])
     }
-
-    console.log($currentUser.avatar)
-    console.log($avatar_uploader_input)
 </script>
 
 <style lang="postcss">
@@ -85,7 +82,7 @@
                             <img src={avatar_preview_url} alt="avatar" />
                         {/if}
                         {#if $currentUser.avatar == "" && $avatar_uploader_input.length == 0}
-                            <img src="/images/avatar_placeholder.png" alt="avatar" />
+                            <img src="/images/avatar_placeholder.jpg" alt="avatar" />
                         {/if}
                     </div>
                     <div class="avatar_uploader_input_wrapper">

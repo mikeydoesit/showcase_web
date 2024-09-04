@@ -1,5 +1,5 @@
 <script>
-    import { PUBLIC_PAYSTACK_KEY, PUBLIC_PAYSTACK_PLAN } from '$env/static/public';
+    import { PUBLIC_PAYSTACK_KEY, PUBLIC_PAYSTACK_PLAN, PUBLIC_POCKETBASE_URL } from '$env/static/public';
     import ProfileHeading from "../../../components/ProfileHeading.svelte";
     import ProfileMenu from "../../../components/ProfileMenu.svelte";
     import Register from "../../../components/Register.svelte"
@@ -7,16 +7,17 @@
     import AvatarUploader from '../../../components/AvatarUploader.svelte'
     import { onMount } from 'svelte'
     import { goto } from '$app/navigation';
-    import { show_registration, show_login, registration_email, registration_name, registration_password, show_avatar_uploader_form, avatar_uploader_input } from '$lib/store'
+    import { show_registration, show_login, registration_email, registration_name, registration_password, show_avatar_uploader_form, avatar_uploader_input, mobile_money_network, mobile_money_number } from '$lib/store'
     import { pocketbase, currentUser } from '$lib/pocketbase.js'
+    import bcrypt from 'bcryptjs';
 
-    let popup
+    // let popup
     
-    onMount(async () => {
-        const module = await import('@paystack/inline-js');
-        const Paystack = module.default;
-        popup = new Paystack();
-    })
+    // onMount(async () => {
+    //     const module = await import('@paystack/inline-js');
+    //     const Paystack = module.default;
+    //     popup = new Paystack();
+    // })
 
     let authorised = false
     let unauthorised = true
@@ -59,47 +60,38 @@
                 show_login.set(false)
                 goto('/profile')
             }
-            console.log($currentUser)
         }
     }
-    const signup = () => {
-        popup.newTransaction({
-            key: PUBLIC_PAYSTACK_KEY,
+    const signup = async () => {
+        const new_user = {
+            name: $registration_name,
             email: $registration_email,
-            amount: 20000,
-            planCode: PUBLIC_PAYSTACK_PLAN,
-            channels: ['mobile_money', 'ussd'],
-            firstName: $registration_name,
-            onSuccess: async (transaction) => {
+            auth: $registration_password,
+            network: $mobile_money_network,
+            momo_number: $mobile_money_number
+        }
+        try {
+            // Send user and payment details to the backend
+            const response = await fetch(`${PUBLIC_POCKETBASE_URL}/api/signup`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(new_user),
+            });
 
-                const data = {
-                    "email": $registration_email,
-                    "password": $registration_password,
-                    "passwordConfirm": $registration_password,
-                    "name": $registration_name
-                };
+            const data = await response.json();
 
-                try {
-                    const record = await pocketbase.collection('users').create(data);
-                    console.log(record);
-                    console.log(transaction);
-                    show_registration.set(false)
-                } catch (error) {
-                    
-                } finally {
+            if(data.data.status == "success") {
+                console.log(data.data)
+                setTimeout(() => {
                     login()
-                }
-            },
-            onLoad: (response) => {
-                console.log("onLoad: ", response);
-            },
-            onCancel: () => {
-                console.log("onCancel");
-            },
-            onError: (error) => {
-                console.log("Error: ", error.message);
+                }, 4000)
             }
-        })
+            
+        } catch (error) {
+            console.error(error)
+        }
     }
 </script>
 

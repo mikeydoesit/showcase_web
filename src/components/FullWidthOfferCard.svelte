@@ -1,3 +1,17 @@
+<script>
+    import { PUBLIC_POCKETBASE_URL } from '$env/static/public';
+    export let business_name
+    export let product_name
+    export let business_id
+    export let business_logo
+    export let bg_img
+    export let product_id
+    export let business_location
+    export let discount_tag
+    export let discount_amount
+    export let price
+</script>
+
 <style lang="postcss">
     .full_width_offer_card {
         @apply px-4;
@@ -78,22 +92,28 @@
 </style>
 
 <section class="full_width_offer_card">
-    <a href="/product/test" class="card">
+    <a href={`/product/${product_id}`} class="card">
         <div class="card_img_wrapper">
-            <img src="/images/drc_bumper_cars.jpeg" alt="offer" />
-            <div class="logo_wrapper">
-                <img src="/images/drc_logo.png" alt="logo" />
-            </div>
+            <img src={bg_img} alt={product_name} />
+            {#if business_logo != ""}
+                <div class="logo_wrapper">
+                    <img src={`${PUBLIC_POCKETBASE_URL}/api/files/merchants/${business_id}/${business_logo}`} alt="logo" />
+                </div>
+            {/if}
         </div>
         <div class="offer_details_wrapper">
             <div class="offer_details_main">
-                <h4 class="company">Deon Recreational Centre</h4>
-                <h6 class="product">10 minute bumper car joyride</h6>
+                <h4 class="company">{business_name}</h4>
+                <h6 class="product">{product_name}</h6>
                 <div class="price_wrapper">
-                    <img src="/images/checkmark.png" alt="checkmark"/>
-                    <span class="old_price"><s>GH&#8373; 50</s></span>
-                    <span class="slash">/</span>
-                    <p class="new_price">GH&#8373; 40</p>
+                    {#if discount_tag == 'BOGOF'}
+                        <p class="new_price">Buy one get one free</p>
+                    {:else}
+                        <img src="/images/checkmark.png" alt="checkmark"/>
+                        <span class="old_price"><s>GH&#8373; {price}</s></span>
+                        <span class="slash">/</span>
+                        <p class="new_price">GH&#8373; {price - ((price/100) * discount_amount)}</p>
+                    {/if}
                 </div>
                 <div class="offer_more_info">
                     <div class="time_left_wrapper">
@@ -102,14 +122,18 @@
                     </div>
                     <div class="location_wrapper">
                         <img src="/images/location_pin.png" alt="location" />
-                        <span class="location">Lashibi Accra</span>
+                        <span class="location">{business_location}</span>
                     </div>
                 </div>
             </div>
             <div class="offer_coupon">
-                <img src="/images/white_coupon.png" alt="coupon" />
-                <span>Save up to</span>
-                <p>30%</p>
+                {#if discount_tag == 'BOGOF'}
+                    <img class="bogof" src="/images/bogof_.png" alt="coupon" />
+                {:else}
+                    <img src="/images/white_coupon.png" alt="coupon" />
+                    <span>Save up to</span>
+                    <p>{discount_amount}%</p>
+                {/if}
             </div>
         </div>
     </a>
