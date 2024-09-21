@@ -5,7 +5,6 @@ const colors = require('tailwindcss/colors')
 export default {
   content: ['./src/**/*.{html,js,svelte,ts}'],
   theme: {
-    
     colors: {
       prime: '#282828',
       card_bg: '#f2f2f2',
@@ -27,10 +26,14 @@ export default {
       border_grey_three: '#ebe7fc',
       border_grey_four: '#93959b',
       border_grey_five: '#cacfd5',
-      transparent: 'transparent'
+      transparent: 'transparent',
+      otp_error_grey: '#f2f2f2',
+      otp_active_grey: '#eff5ff',
+      otp_blue: '#8ebbff'
     },
     gridTemplateColumns: {
       'tapbarmenu': '1fr 1fr 1fr 1fr 1fr',
+      'otp_grid': '1fr 1fr 1fr 1fr 1fr 1fr',
       'filter_btns': 'auto auto 1fr 1fr',
       'category_grid': 'repeat(2, minmax(0, 1fr))',
       'featured_grid': 'repeat(1, minmax(0, 1fr))',

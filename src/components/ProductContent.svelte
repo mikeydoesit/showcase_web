@@ -51,9 +51,6 @@
             console.error(error)
         }
     }
-    // onMount(() => {
-        
-    // })
 </script>
 
 <style lang="postcss">

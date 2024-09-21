@@ -6,111 +6,124 @@
 
     export let user = '';
     export let pb = {}
+    let list_has_items = false
 
     const set_offers_list = async () => {
         try {
             const all_offers = await pb.collection('users').getOne(user.id);
-            // const existing_offers = await pb.collection('campaigns').getList(1, 50, {
-            //     filter: `is_active = true && merchant = "${merchant.id}"`,
-            //     expand: 'merchant'
-            // })
-            // const redeemed_offers = await pb.collection('campaigns').getList(1, 50, {
-            //     filter: `is_active = true && merchant = "${merchant.id}"`,
-            //     expand: 'merchant'
-            // })
 
             try {
                 let filter_string = '';
-                for (let i = 0; i < all_offers.offers.length; i++) {
-                    filter_string += `id = "${all_offers.offers[i].id}" || `;
+
+                let existing_offers = all_offers.offers.filter((product) => {
+                        return product.redeemable === true
+                    });
+
+                let redeemed_offers = all_offers.offers.filter((product) => {
+                        return product.redeemable === false
+                    });
+
+                if($show_all_offers) {
+                    for (let i = 0; i < all_offers.offers.length; i++) {
+                        filter_string += `id = "${all_offers.offers[i].id}" || `;
+                    }
                 }
+
+                if($show_existing_offers) {
+                    for (let i = 0; i < existing_offers.length; i++) {
+                        filter_string += `id = "${existing_offers[i].id}" || `;
+                    }
+                }
+
+                if($show_redeemed_offers) {
+                    for (let i = 0; i < redeemed_offers.length; i++) {
+                        filter_string += `id = "${redeemed_offers[i].id}" || `;
+                    }
+                }
+
                 let trimmed_filter_string = filter_string.slice(0, -4);
-                // fetch a paginated records list
-                const resultList = await pb.collection('campaigns').getList(1, 50, {
-                    filter: trimmed_filter_string,
-                    sort: '-created',
-                    expand: 'merchant'
-                });
-                console.log(resultList)
-                if(resultList && $show_all_offers) {
-                    return resultList.items
-                } 
+                
+                if(trimmed_filter_string == "") {
+                    return null
+                } else {
+                    const resultList = await pb.collection('campaigns').getList(1, 50, {
+                        filter: trimmed_filter_string,
+                        sort: '-created',
+                        expand: 'merchant'
+                    });
+                    if(resultList) {
+                        list_has_items = true
+                        return resultList.items
+                    } else {
+                        list_has_items = false
+                        return []
+                    }
+                }
+                
+                
 
             } catch (error) {
                 console.error(error)
             }
-            // else if(existing_offers && $show_existing_offers) {
-            //     return existing_offers.items
-            // } else if(redeemed_offers && $show_redeemed_offers) {
-            //     return redeemed_offers.items
-            // }
         } catch (error) {
             console.log(error)
         }
     }
     let get_offers_list = set_offers_list()
-    
-
-    // const toggle_campaign_action_menu = (e) => {
-    //     sessionStorage.setItem("selected_campaign", e.target.dataset.selected_campaign)
-    //     show_campaign_action.set(true)
-    // }
-    const formatDate = (dateString) => {
-        let locale = Intl.DateTimeFormat().resolvedOptions().locale;
-        const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-        return new Date(dateString).toLocaleDateString(locale, options);
-    }
 </script>
 
 <style lang="postcss">
     .offers_list {
-        @apply px-4 mt-8 flex flex-col gap-4;
+        @apply grid-cols-category_grid pt-2 pb-4 px-4 mt-8 gap-4;
+    }
+    .offers_list::-webkit-scrollbar {
+        display: none;
     }
     .card {
         @apply flex flex-col rounded-xl;
         box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
     }
     .card_img_wrapper {
-        @apply w-full h-48 relative rounded-t-xl;
+        @apply w-[43vw] h-24 relative rounded-t-xl;
     }
     .card_img_wrapper img {
         @apply w-full h-full object-cover object-center rounded-t-xl;
     }
     .logo_wrapper {
-        @apply absolute left-0 top-4 bg-main_bg w-16 px-2 py-1;
+        @apply absolute left-0 top-4 bg-main_bg w-12 px-1.5 py-0.5;
     }
     .offer_details_wrapper {
-        @apply flex flex-row justify-between rounded-bl-xl;
+        @apply flex flex-row justify-between;
     }
     .offer_details_main {
-        @apply pl-2 rounded-bl-xl pb-3;
+        @apply pl-2 pb-3;
     }
     .company {
-        @apply mt-2 text-lg text-splash_bg font-medium;
+        @apply mt-2 text-base text-splash_bg font-medium;
     }
     .product {
-        @apply text-text_grey text-sm;
+        @apply text-text_grey text-xs;
     }
     .price_wrapper {
         @apply flex flex-row items-center mt-2;
     }
     .price_wrapper img {
-        @apply w-4 h-4 mr-2;
+        @apply w-3 h-3 mr-1.5;
     }
     .old_price {
-        @apply text-xs text-text_grey;
+        @apply text-xs text-text_grey block;
     }
     .slash {
         @apply mx-1 text-xs text-text_grey;
     }
     .new_price {
-        @apply text-accent_bg font-semibold text-lg;
+        @apply text-accent_bg font-semibold text-base block;
     }
     .offer_more_info {
-        @apply flex flex-row items-center mt-1;
+        @apply flex flex-col-reverse items-start mt-1 justify-start;
     }
     .time_left_wrapper {
-        @apply flex flex-row items-center mr-3.5;
+        @apply flex flex-row items-center mt-1;
     }
     .time_left {
         @apply text-xs text-highlight_bg;
@@ -128,16 +141,13 @@
         @apply text-xs text-text_grey;
     }
     .offer_coupon {
-        @apply flex flex-col items-center justify-center bg-splash_bg text-main_bg px-3 border-l-2 border-dotted rounded-br-xl;
-    }
-    .offer_coupon .bogof {
-        @apply w-12 h-auto;
+        @apply flex flex-row items-center justify-between bg-splash_bg text-main_bg px-4 py-2 border-t-2 border-dotted rounded-b-xl;
     }
     .offer_coupon img {
-        @apply w-6 h-6;
+        @apply w-5 h-5;
     }
     .offer_coupon span {
-        @apply text-xs mt-2;
+        @apply text-xs;
     }
     .offer_coupon p {
         @apply text-xl font-semibold;
@@ -227,24 +237,11 @@
     }
 </style>
 
-<section class="offers_list" transition:slide={{ delay: 0, duration: 200, easing: quintOut, axis: 'x' }} >
+<section class={`offers_list ${list_has_items < 1 ? 'flex' : 'grid'}`}  transition:slide={{ delay: 0, duration: 200, easing: quintOut, axis: 'x' }} >
         {#await get_offers_list}
-        <div class="spinner_wrapper">
-            <div class="spinner center">
-                <div class="spinner-blade"></div>
-                <div class="spinner-blade"></div>
-                <div class="spinner-blade"></div>
-                <div class="spinner-blade"></div>
-                <div class="spinner-blade"></div>
-                <div class="spinner-blade"></div>
-                <div class="spinner-blade"></div>
-                <div class="spinner-blade"></div>
-                <div class="spinner-blade"></div>
-                <div class="spinner-blade"></div>
-                <div class="spinner-blade"></div>
-                <div class="spinner-blade"></div>
+            <div class="loader_wrapper">
+                <div class="spinner"></div>
             </div>
-        </div>
         {:then offers_list}
             {#if offers_list == null}
                 <div class="no_offers">
@@ -253,76 +250,40 @@
                 </div>
             {:else}
                 {#each offers_list as offer}
-                        <a href={`/product/${offer.id}`} class="card" transition:slide={{ delay: 0, duration: 200, easing: quintOut, axis: 'x' }}>
-                            <div class="card_img_wrapper">
-                                <img src={offer.stock_images[0].url} alt={offer.product_name} />
-                                {#if offer.expand.merchant.logo != ""}
-                                    <div class="logo_wrapper">
-                                        <img src={`${PUBLIC_POCKETBASE_URL}/api/files/merchants/${offer.merchant}/${offer.expand.merchant.logo}`} alt="logo" />
-                                    </div>
-                                {/if}
-                            </div>
-                            <div class="offer_details_wrapper">
-                                <div class="offer_details_main">
-                                    <h4 class="company">{offer.expand.merchant.business_name}</h4>
-                                    <h6 class="product">{offer.product_name}</h6>
-                                    <div class="price_wrapper">
-                                        {#if offer.discount_type == 'BOGOF'}
-                                            <p class="new_price">Buy one get one free</p>
-                                        {:else}
-                                            <img src="/images/checkmark.png" alt="checkmark"/>
-                                            <span class="old_price"><s>GH&#8373; {offer.original_price}</s></span>
-                                            <span class="slash">/</span>
-                                            <p class="new_price">GH&#8373; {offer.original_price - ((offer.original_price/100) * offer.discount_value)}</p>
-                                        {/if}
-                                    </div>
-                                    <div class="offer_more_info">
-                                        <div class="time_left_wrapper">
-                                            <img src="/images/time.png" alt="time icon" />
-                                            <span class="time_left">3 days left</span>
-                                        </div>
-                                        <div class="location_wrapper">
-                                            <img src="/images/location_pin.png" alt="location" />
-                                            <span class="location">{offer.expand.merchant.location}</span>
-                                        </div>
+                    <a href={`/product/redemption/${offer.id}`} class="card" transition:slide={{ delay: 0, duration: 200, easing: quintOut, axis: 'x' }}>
+                        <div class="card_img_wrapper">
+                            <img src={offer.stock_images[0].url} alt={offer.product_name} />
+                            {#if offer.expand.merchant.logo != ""}
+                                <div class="logo_wrapper">
+                                    <img src={`${PUBLIC_POCKETBASE_URL}/api/files/merchants/${offer.expand.merchant.id}/${offer.expand.merchant.logo}`} alt="logo" />
+                                </div>
+                            {/if}
+                        </div>
+                        <div class="offer_details_wrapper">
+                            <div class="offer_details_main">
+                                <h4 class="company">{offer.expand.merchant.business_name.substring(0, 15)}{#if offer.expand.merchant.business_name.length > 16} ...{/if}</h4>
+                                <h6 class="product">{offer.product_name}</h6>
+                                <div class="price_wrapper">
+                                    {#if offer.discount_type == 'BOGOF'}
+                                        <p class="new_price">Buy 1 get 1 free</p>
+                                    {:else}
+                                        <span class="old_price"><s>GH&#8373; {offer.original_price}</s></span>
+                                        <span class="slash">/</span>
+                                        <p class="new_price">GH&#8373; {offer.original_price - ((offer.original_price/100) * offer.discount_value)}</p>
+                                    {/if}
+                                </div>
+                                <div class="offer_more_info">
+                                    <div class="time_left_wrapper">
+                                        <img src="/images/time.png" alt="time icon" />
+                                        <span class="time_left">3 days left</span>
                                     </div>
                                 </div>
-                                <!-- <div class="offer_coupon">
-                                    {#if discount_tag == 'BOGOF'}
-                                        <img class="bogof" src="/images/bogof_.png" alt="coupon" />
-                                    {:else}
-                                        <img src="/images/white_coupon.png" alt="coupon" />
-                                        <span>Save up to</span>
-                                        <p>{discount_amount}%</p>
-                                    {/if}
-                                </div> -->
-                            </div>
-                        </a>
-                        <!-- <div class="card_heading">
-                            <div class="status_label">
-                                {#if $show_active_campaigns}
-                                    <span>Active</span>
-                                {:else if $show_draft_campaigns}
-                                    <span>Draft</span>
-                                {/if}
-                            </div>
-                            <div class="img_wrapper" on:click={toggle_campaign_action_menu} data-selected_campaign={campaign.id}>
-                                <img src="/images/more_dots.png" alt="icon"/>
                             </div>
                         </div>
-                        <div class="card_main">
-                            <h4>{campaign.product_name} ({campaign.sub_category}) - {campaign.expand.merchant.business_name}</h4>
-                            <span class="edit_date">Last modified on: {formatDate(campaign.updated)}</span>
+                        <div class="offer_action_btn">
+
                         </div>
-                        <div class="card_footer">
-                            <div class="main_action_btn" on:click={$show_active_campaigns ? edit_campaign(campaign.id) : publish_campaign(campaign.id)} data-campaign_id={campaign.id}>
-                                {#if $show_active_campaigns}
-                                    <span>Edit</span>
-                                {:else if $show_draft_campaigns}
-                                    <span>Publish</span>
-                                {/if}
-                            </div>
-                        </div> -->
+                    </a>
                 {/each}
             {/if}
         {/await}

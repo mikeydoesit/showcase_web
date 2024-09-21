@@ -1,7 +1,7 @@
 <script>
 	import { slide, fade } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
-    import { show_registration, registration_email, registration_name, registration_password, registration_number, show_registration_page_one, show_registration_page_two, mobile_money_number, mobile_money_network } from '$lib/store.js';
+    import { show_registration, registration_email, registration_name, registration_password, registration_number, show_registration_page_one, show_registration_page_two, show_registration_page_three, mobile_money_number, mobile_money_network } from '$lib/store.js';
     import { imask } from '@imask/svelte';
 
     export let submit_new_user;
@@ -15,6 +15,9 @@
     let show_pwd_error = false
     let show_number_error = false
 
+    let payment_method = "momo"
+    let term_length = "monthly"
+
     // iMask options
     const phone_number_options = {
 		mask: '000 000 000 0'
@@ -25,7 +28,18 @@
     }
     const go_to_page_two = () => {
         show_registration_page_one.set(false)
+        show_registration_page_three.set(false)
         show_registration_page_two.set(true)
+    }
+    const go_to_page_one = () => {
+        show_registration_page_three.set(false)
+        show_registration_page_two.set(false)
+        show_registration_page_one.set(true)
+    }
+    const go_to_page_three = () => {
+        show_registration_page_one.set(false)
+        show_registration_page_two.set(false)
+        show_registration_page_three.set(true)
     }
 
     const set_name = (e) => {
@@ -86,7 +100,7 @@
     @apply h-full w-full relative bg-transparent flex flex-col justify-end;
 }
 .registration_inner {
-    @apply bg-main_bg h-auto max-h-[80vh] w-full rounded-t-2xl z-20 px-8 py-8 overflow-y-scroll;
+    @apply bg-main_bg h-auto max-h-[80vh] w-full rounded-t-2xl z-20 px-6 py-8 overflow-y-scroll;
 }
 .registration_header {
     @apply flex flex-row justify-between items-center;
@@ -107,7 +121,7 @@
     @apply text-xs font-black text-border_grey_four/70 mt-2;
 }
 .registration_form_main {
-    @apply mt-12;
+    @apply mt-10;
 }
 .form_item {
     @apply border-b-2 mb-9;
@@ -152,7 +166,7 @@
     @apply flex flex-row justify-between items-center;
 }
 .mobile_money_number {
-    @apply text-3xl mb-1 text-main_bg/90 font-medium;
+    @apply text-2xl mb-2 text-main_bg/90 font-medium;
 }
 .account_name h6 {
     @apply text-lg uppercase text-main_bg/70;
@@ -175,6 +189,136 @@
 .network_selector_btn img {
     @apply h-full w-auto object-contain object-center;
 }
+.method_selector {
+    @apply flex flex-col gap-2 mt-6;
+}
+.method_selector_item {
+    @apply relative px-2 py-3;
+}
+.cell_bg {
+    @apply absolute top-0 bottom-0 left-0 right-0 -z-10 rounded-xl;
+}
+.method_selector_item_input {
+    @apply h-0 w-0 opacity-0 absolute;
+}
+.method_selector_item_label {
+    @apply w-full h-full;
+}
+.item_label_inner {
+    @apply flex flex-row justify-between;
+}
+.item_label_inner_main_col {
+    @apply flex flex-col;
+}
+.item_label_inner_main_col h4 {
+    @apply text-lg font-medium text-black mt-2;
+}
+.method_logos {
+    @apply flex flex-row items-center gap-2.5;
+}
+.method_logo_wrapper {
+    @apply h-9;
+}
+.method_logo_wrapper img {
+    @apply w-auto h-full;
+}
+.checked_icon {
+    @apply w-6 flex items-center justify-center;
+}
+.checked_icon img {
+    @apply w-full h-auto;
+}
+.method_selector_item_input:checked + .cell_bg {
+    @apply bg-accent_bg/40;
+}
+.disclaimer {
+    @apply flex flex-row justify-center py-3 pr-4 pl-2 bg-accent_bg/10 rounded-xl my-6;
+}
+.badge {
+    @apply w-14 mr-2 flex items-center justify-center;
+}
+.badge img {
+    @apply w-full h-auto;
+}
+.text {
+    @apply text-xs flex items-center justify-center;
+}
+.text p {
+    @apply text-justify;
+}
+.plan_selector {
+    @apply relative min-h-32 rounded-xl bg-gradient-to-t from-splash_bg to-highlight_bg to-85% mb-8;
+}
+.abstract_dots {
+    @apply absolute top-0 left-0 p-2 opacity-20 w-full;
+}
+.plan_selector_content {
+    @apply px-6 py-6 z-10 relative;
+}
+.plan_selector_content .main_price {
+    @apply flex flex-row text-main_bg items-center;
+}
+.plan_selector_content .main_price h3 {
+    @apply font-semibold text-3xl m-0;
+}
+.plan_desc {
+    @apply my-4 text-main_bg;
+}
+.plan_desc .title {
+    @apply text-lg font-medium;
+}
+.plan_desc .desc {
+    @apply mt-1 opacity-70 leading-5;
+}
+.term_length_selector {
+    @apply bg-main_bg rounded-xl;
+}
+.term_length_item {
+    @apply relative;
+}
+.term_length_item_input {
+    @apply h-0 w-0 opacity-0 absolute;
+}
+.item_bg {
+    @apply  absolute w-full h-full;
+}
+.term_length_selector .item_bg.top {
+    @apply  rounded-t-xl;
+}
+.term_length_selector .item_bg.bottom {
+    @apply  rounded-b-xl;
+}
+.term_length_item_input:checked + .item_bg {
+    @apply bg-accent_bg;
+}
+.term_length_item_label {
+    @apply z-10 relative;
+}
+.item_label_inner {
+    @apply flex flex-row justify-between items-center px-4 py-3;
+}
+.item_label_inner .checkbox {
+    @apply w-4;
+}
+.item_label_inner .checkbox img {
+    @apply w-full h-auto;
+}
+.item_label_inner .item_title {
+    @apply font-semibold text-lg;
+}
+.savings {
+    @apply font-semibold text-xs text-accent_bg rounded-lg py-0.5 px-1.5;
+}
+.nav_wrapper {
+    @apply flex flex-row gap-2 h-auto;
+}
+.nav_wrapper .back_btn {
+    @apply bg-splash_bg rounded-lg flex justify-center items-center h-[inherit] mt-2 px-3.5;
+}
+.nav_wrapper .back_btn img {
+    @apply h-8;
+}
+
 </style>
 
 <div class="registration">
@@ -185,6 +329,9 @@
                     <h3>New<br/>account</h3>
                 {/if}
                 {#if $show_registration_page_two}
+                    <h3>Select your term length</h3>
+                {/if}
+                {#if $show_registration_page_three}
                     <h3>Payment</h3>
                 {/if}
                 {#if $show_registration_page_one}
@@ -262,6 +409,193 @@
                     </div>
                 {/if}
                 {#if $show_registration_page_two}
+                    <div class="payment_method">
+                        <div class="plan_selector">
+                            <img class="abstract_dots" src="/images/dots.png" alt="dots" />
+                            <div class="plan_selector_content">
+                                <div class="main_price">
+                                    {#if term_length == "monthly"}
+                                        <h3>GH&#8373; 200</h3>
+                                    {:else if term_length == "quarterly"}
+                                        <h3>GH&#8373; 180</h3>
+                                    {:else if term_length == "biannually"}
+                                        <h3>GH&#8373; 170</h3>
+                                    {:else if term_length == "annually"}
+                                        <h3>GH&#8373; 150</h3>
+                                    {/if}
+                                    <p>/month</p>
+                                </div>
+                                <div class="plan_desc">
+                                    <h5 class="title">Mango  
+                                    {#if term_length == "monthly"}
+                                        Monthly
+                                    {:else if term_length == "quarterly"}
+                                        Quarterly
+                                    {:else if term_length == "biannually"}
+                                        Biannual
+                                    {:else if term_length == "annually"}
+                                        Annual
+                                    {/if}
+                                    Accra Pass</h5>
+                                    <p class="desc">Enjoy complete access to Mango dicounts and offers for   
+                                        {#if term_length == "monthly"}
+                                            one month.
+                                        {:else if term_length == "quarterly"}
+                                            three months.
+                                        {:else if term_length == "biannually"}
+                                            six months.
+                                        {:else if term_length == "annually"}
+                                            a whole year.
+                                        {/if}</p>
+                                </div>
+                                <div class="term_length_selector">
+                                    <div class="term_length_item">
+                                        <input id="monthly" type="radio" name="term_length" class="term_length_item_input" value="monthly" bind:group={term_length} />
+                                        <div class="item_bg top"></div>
+                                        <label for="monthly" class="term_length_item_label">
+                                            <div class="item_label_inner">
+                                                <div class="checkbox">
+                                                    {#if term_length == "monthly"}
+                                                        <img src="/images/check_blue.png" alt="monthly" />
+                                                    {:else}
+                                                        <img src="/images/circle_blue.png" alt="monthly" />
+                                                    {/if}
+                                                </div>
+                                                <span class={`item_title ${term_length == "monthly" ? "text-main_bg" : "text-accent_bg"}`}>1 Month</span>
+                                                <div class="savings">
+                                                    <span></span>
+                                                </div>
+                                            </div>
+                                        </label> 
+                                    </div>
+                                    <div class="term_length_item">
+                                        <input id="quarterly" type="radio" name="term_length" class="term_length_item_input" value="quarterly" bind:group={term_length} />
+                                        <div class="item_bg"></div>
+                                        <label for="quarterly" class="term_length_item_label">
+                                            <div class="item_label_inner">
+                                                <div class="checkbox">
+                                                    {#if term_length == "quarterly"}
+                                                        <img src="/images/check_blue.png" alt="quarterly" />
+                                                    {:else}
+                                                        <img src="/images/circle_blue.png" alt="quarterly" />
+                                                    {/if}
+                                                </div>
+                                                <span class={`item_title ${term_length == "quarterly" ? "text-main_bg" : "text-accent_bg"}`}>3 Months</span>
+                                                <div class={`savings ${term_length == "quarterly" ? "bg-main_bg" : ""}`}>
+                                                    <span>Save GH&#8373; 240*</span>
+                                                </div>
+                                            </div>
+                                        </label> 
+                                    </div>
+                                    <div class="term_length_item">
+                                        <input id="biannually" type="radio" name="term_length" class="term_length_item_input" value="biannually" bind:group={term_length} />
+                                        <div class="item_bg"></div>
+                                        <label for="biannually" class="term_length_item_label">
+                                            <div class="item_label_inner">
+                                                <div class="checkbox">
+                                                    {#if term_length == "biannually"}
+                                                        <img src="/images/check_blue.png" alt="biannually" />
+                                                    {:else}
+                                                        <img src="/images/circle_blue.png" alt="biannually" />
+                                                    {/if}
+                                                </div>
+                                                <span class={`item_title ${term_length == "biannually" ? "text-main_bg" : "text-accent_bg"}`}>6 Months</span>
+                                                <div class={`savings ${term_length == "biannually" ? "bg-main_bg" : ""}`}>
+                                                    <span>Save GH&#8373; 360*</span>
+                                                </div>
+                                            </div>
+                                        </label> 
+                                    </div>
+                                    <div class="term_length_item">
+                                        <input id="annually" type="radio" name="term_length" class="term_length_item_input" value="annually" bind:group={term_length} />
+                                        <div class="item_bg bottom"></div>
+                                        <label for="annually" class="term_length_item_label">
+                                            <div class="item_label_inner">
+                                                <div class="checkbox">
+                                                    {#if term_length == "annually"}
+                                                        <img src="/images/check_blue.png" alt="annually" />
+                                                    {:else}
+                                                        <img src="/images/circle_blue.png" alt="annually" />
+                                                    {/if}
+                                                </div>
+                                                <span class={`item_title ${term_length == "annually" ? "text-main_bg" : "text-accent_bg"}`}>12 Months</span>
+                                                <div class={`savings ${term_length == "annually" ? "bg-main_bg" : ""}`}>
+                                                    <span>Save GH&#8373; 600</span>
+                                                </div>
+                                            </div>
+                                        </label> 
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="registration_header">
+                            <h3>Choose your payment method</h3>
+                        </div>
+                        <div class="method_selector">
+                            <div class="method_selector_item">
+                                <input value="momo" id="momo" class="method_selector_item_input" type="radio" name="payment_method" bind:group={payment_method}/>
+                                <div class="cell_bg"></div>
+                                <label for="momo" class="method_selector_item_label">
+                                    <div class="item_label_inner">
+                                        <div class="item_label_inner_main_col">
+                                            <div class="method_logos">
+                                                <div class="method_logo_wrapper">
+                                                    <img src="/images/momo.png" alt="momo" />
+                                                </div>
+                                            </div>
+                                            <!-- <h4>Mobile Money</h4> -->
+                                        </div>
+                                        <div class="checked_icon">
+                                            {#if payment_method == "momo"}
+                                                <img src="/images/checked.png" alt="" />
+                                            {/if}
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="method_selector_item">
+                                <input value="card" id="card" class="method_selector_item_input" type="radio" name="payment_method" bind:group={payment_method}/>
+                                <div class="cell_bg"></div>
+                                <label for="card" class="method_selector_item_label">
+                                    <div class="item_label_inner">
+                                        <div class="item_label_inner_main_col">
+                                            <div class="method_logos">
+                                                <div class="method_logo_wrapper">
+                                                    <img src="/images/card.png" alt="card" />
+                                                </div>
+                                            </div>
+                                            <!-- <h4>Credit/Debit Card</h4> -->
+                                        </div>
+                                        <div class="checked_icon">
+                                            {#if payment_method == "card"}
+                                                <img src="/images/checked.png" alt="" />
+                                            {/if}
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="disclaimer">
+                            <div class="badge">
+                                <img src="/images/shield.png" alt="shield" />
+                            </div>
+                            <div class="text">
+                                <p>We adhere entirely to the data security standards of the payment industry.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="nav_wrapper">
+                        <div class="back_btn" on:click={go_to_page_one}>
+                            <img src="/images/back_chevron.png" alt="back" />
+                        </div>
+                        <div class={`sign_up_btn pointer-events-auto cursor-pointer opacity-100`} on:click={go_to_page_three}>
+                            <span>Next</span>
+                        </div>
+                    </div>
+                {/if}
+                {#if $show_registration_page_three}
                     <div class="payment_section">
                         <div class="card">
                             <div class="network_icon">

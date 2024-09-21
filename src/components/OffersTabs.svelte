@@ -8,7 +8,7 @@
     }
     const toggle_redeemed_offers = () => {
         show_all_offers.set(false)
-        show_redeemed_offers.set(SVGComponentTransferFunctionElement)
+        show_redeemed_offers.set(true)
         show_existing_offers.set(false)
     }
     const toggle_existing_offers = () => {

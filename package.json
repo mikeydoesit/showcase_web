@@ -30,6 +30,7 @@
 	"type": "module",
 	"dependencies": {
 		"@imask/svelte": "^7.6.1",
+		"@k4ung/svelte-otp": "^0.0.9",
 		"@paystack/inline-js": "^2.20.2",
 		"bcryptjs": "^2.4.3",
 		"pocketbase": "^0.21.2"
