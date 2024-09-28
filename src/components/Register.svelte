@@ -1,7 +1,7 @@
 <script>
 	import { slide, fade } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
-    import { show_registration, registration_email, registration_name, registration_password, registration_number, show_registration_page_one, show_registration_page_two, show_registration_page_three, mobile_money_number, mobile_money_network, payment_method, gateway_provider, term_length, cc_number, secure_code, expiry_date } from '$lib/store.js';
+    import { show_registration, registration_email, registration_name, registration_password, registration_number, show_registration_page_one, show_registration_page_two, show_registration_page_three, mobile_money_number, mobile_money_network, payment_method, gateway_provider, term_length, cc_number_to_display, cc_number, secure_code, expiry_date } from '$lib/store.js';
     import { imask } from '@imask/svelte';
 
     export let submit_new_user;
@@ -109,6 +109,9 @@
 
     const set_cc_number = ({ detail: imask }) => {
         cc_number.set(imask.el.value)
+
+        cc_number_to_display.set($cc_number.split(" "))
+
         const regex = /^\d{4} \d{4} \d{4} \d{4}$/;
 
         if (regex.test($cc_number)) {
@@ -119,11 +122,34 @@
             valid_cc_number = false
         }
     }
-    const set_expiry_date = () => {
+    const set_expiry_date = ({ detail: imask }) => {
 
+        let deconstructed = []
+
+        expiry_date.set(imask.el.value)
+
+        if ($expiry_date.length == 5) {
+            deconstructed = $expiry_date.split("/")
+        }
+        
+        if (deconstructed[0] < 1 || deconstructed[0] > 12 || deconstructed[1] < 24 || deconstructed[0] == undefined) {
+            show_expiry_date_error = true
+            valid_expiry_date = false
+        } else {
+            show_expiry_date_error = false
+            valid_expiry_date = true
+        }
     }
-    const set_secure_code = () => {
+    const set_secure_code = ({ detail: imask }) => {
+        secure_code.set(imask.el.value)
 
+        if($secure_code < 3) {
+            show_secure_code_error = true
+            valid_secure_code = false
+        } else {
+            show_secure_code_error = false
+            valid_secure_code = true
+        }
     }
 </script>
 
@@ -158,6 +184,12 @@
 .registration_form_main {
     @apply mt-10;
 }
+.two_col_form_item {
+    @apply grid grid-cols-category_grid w-full gap-12;
+}
+.two_col_form_item .form_item {
+    @apply w-full;
+}
 .form_item {
     @apply border-b-2 mb-9;
 }
@@ -186,7 +218,7 @@
     @apply bg-splash_bg text-main_bg text-lg font-bold w-11/12 py-4 flex justify-center items-center rounded-lg mx-auto mt-2;
 }
 .cc_card {
-    @apply bg-black_mtn rounded-xl p-6;
+    @apply bg-black_mtn rounded-xl p-6 pb-4;
 }
 .gateway_icon {
     @apply h-6;
@@ -210,7 +242,7 @@
     @apply h-full;
 }
 .cc_number {
-    @apply text-2xl mt-2 mb-4 text-main_bg font-medium font-credit;
+    @apply text-[1.7rem] mt-2 mb-4 text-main_bg font-medium font-credit flex flex-row justify-between items-center;
 }
 .cc_card .account_name h6 {
     @apply text-lg uppercase text-main_bg font-credit;
@@ -780,10 +812,31 @@
                                     </div>
                                     <div class="cc_number">
                                         <h4>
-                                            {#if $cc_number.length == 0}
-                                                0000 0000 0000 0000
+                                            {#if $cc_number_to_display[0] == undefined || $cc_number_to_display[0] == ""}
+                                                0000
                                             {:else}
-                                                {$cc_number}
+                                                {$cc_number_to_display[0]}
+                                            {/if}
+                                        </h4>
+                                        <h4>
+                                            {#if $cc_number_to_display[1] == undefined || $cc_number_to_display[1] == ""}
+                                                0000
+                                            {:else}
+                                                {$cc_number_to_display[1]}
+                                            {/if}
+                                        </h4>
+                                        <h4>
+                                            {#if $cc_number_to_display[2] == undefined || $cc_number_to_display[2] == ""}
+                                                0000
+                                            {:else}
+                                                {$cc_number_to_display[2]}
+                                            {/if}
+                                        </h4>
+                                        <h4>
+                                            {#if $cc_number_to_display[3] == undefined || $cc_number_to_display[3] == ""}
+                                                0000
+                                            {:else}
+                                                {$cc_number_to_display[3]}
                                             {/if}
                                         </h4>
                                     </div>
@@ -809,7 +862,7 @@
                                     </div>
                                     <input 
                                         id="cc_number_input"
-                                        type="number"
+                                        type="tel"
                                         pattern="\d{4} \d{4} \d{4} \d{4}"
                                         on:accept={set_cc_number}
                                         use:imask={cc_number_options}
@@ -827,7 +880,7 @@
                                     <div class="form_item_input_wrapper">
                                         <input 
                                             id="expiry_date_input"
-                                            type="number"
+                                            type="tel"
                                             pattern="\d{2}/\d{2}"
                                             on:accept={set_expiry_date}
                                             use:imask={expiry_date_options}
