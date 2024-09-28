@@ -1,7 +1,7 @@
 <script>
 	import { slide, fade } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
-    import { show_registration, registration_email, registration_name, registration_password, registration_number, show_registration_page_one, show_registration_page_two, show_registration_page_three, mobile_money_number, mobile_money_network } from '$lib/store.js';
+    import { show_registration, registration_email, registration_name, registration_password, registration_number, show_registration_page_one, show_registration_page_two, show_registration_page_three, mobile_money_number, mobile_money_network, payment_method, gateway_provider, term_length, cc_number, secure_code, expiry_date } from '$lib/store.js';
     import { imask } from '@imask/svelte';
 
     export let submit_new_user;
@@ -10,18 +10,33 @@
     let valid_pwd = false
     let valid_name = false
     let valid_number = false
+
+    let valid_cc_number = false 
+    let valid_expiry_date = false 
+    let valid_secure_code = false
+
     let show_email_error = false
     let show_name_error = false
     let show_pwd_error = false
     let show_number_error = false
 
-    let payment_method = "momo"
-    let term_length = "monthly"
+    let show_cc_number_error = false
+    let show_expiry_date_error = false
+    let show_secure_code_error = false
 
     // iMask options
     const phone_number_options = {
 		mask: '000 000 000 0'
     };
+    const cc_number_options = {
+		mask: '0000 0000 0000 0000'
+    };
+    const expiry_date_options = {
+		mask: '00/00'
+    };
+    const secure_code_options = {
+        mask: '000'
+    }
 
     const hide_element = () => {
         show_registration.set(false)
@@ -90,6 +105,26 @@
         registration_email.set(e.target.value)
         validate_email(e)
     }
+
+
+    const set_cc_number = ({ detail: imask }) => {
+        cc_number.set(imask.el.value)
+        const regex = /^\d{4} \d{4} \d{4} \d{4}$/;
+
+        if (regex.test($cc_number)) {
+            show_cc_number_error = false
+            valid_cc_number = true
+        } else {
+            show_cc_number_error = true
+            valid_cc_number = false
+        }
+    }
+    const set_expiry_date = () => {
+
+    }
+    const set_secure_code = () => {
+
+    }
 </script>
 
 <style lang="postcss">
@@ -150,8 +185,41 @@
 .sign_up_btn {
     @apply bg-splash_bg text-main_bg text-lg font-bold w-11/12 py-4 flex justify-center items-center rounded-lg mx-auto mt-2;
 }
-.card {
-    @apply bg-black_mtn rounded-2xl p-6;
+.cc_card {
+    @apply bg-black_mtn rounded-xl p-6;
+}
+.gateway_icon {
+    @apply h-6;
+}
+.gateway_icon img {
+    @apply h-full ;
+}
+.chip_wrapper {
+    @apply flex flex-row items-center ml-1 mb-1.5;
+}
+.chip_wrapper .chip {
+    @apply h-7 mr-3;
+}
+.chip_wrapper .chip img {
+    @apply h-full;
+}
+.chip_wrapper .contactless {
+    @apply h-6;
+}
+.chip_wrapper .contactless img {
+    @apply h-full;
+}
+.cc_number {
+    @apply text-2xl mt-2 mb-4 text-main_bg font-medium font-credit;
+}
+.cc_card .account_name h6 {
+    @apply text-lg uppercase text-main_bg font-credit;
+}
+.cc_card .expiry_date h6 {
+    @apply text-lg uppercase text-main_bg font-credit;
+}
+.momo_card {
+    @apply bg-black_mtn rounded-xl p-6;
 }
 .network_icon {
     @apply h-9;
@@ -414,54 +482,54 @@
                             <img class="abstract_dots" src="/images/dots.png" alt="dots" />
                             <div class="plan_selector_content">
                                 <div class="main_price">
-                                    {#if term_length == "monthly"}
-                                        <h3>GH&#8373; 200</h3>
-                                    {:else if term_length == "quarterly"}
-                                        <h3>GH&#8373; 180</h3>
-                                    {:else if term_length == "biannually"}
-                                        <h3>GH&#8373; 170</h3>
-                                    {:else if term_length == "annually"}
-                                        <h3>GH&#8373; 150</h3>
+                                    {#if $term_length == "monthly"}
+                                        <h3>GH&#8373; 199</h3>
+                                    {:else if $term_length == "quarterly"}
+                                        <h3>GH&#8373; 179</h3>
+                                    {:else if $term_length == "biannually"}
+                                        <h3>GH&#8373; 169</h3>
+                                    {:else if $term_length == "annually"}
+                                        <h3>GH&#8373; 149</h3>
                                     {/if}
                                     <p>/month</p>
                                 </div>
                                 <div class="plan_desc">
                                     <h5 class="title">Mango  
-                                    {#if term_length == "monthly"}
+                                    {#if $term_length == "monthly"}
                                         Monthly
-                                    {:else if term_length == "quarterly"}
+                                    {:else if $term_length == "quarterly"}
                                         Quarterly
-                                    {:else if term_length == "biannually"}
+                                    {:else if $term_length == "biannually"}
                                         Biannual
-                                    {:else if term_length == "annually"}
+                                    {:else if $term_length == "annually"}
                                         Annual
                                     {/if}
                                     Accra Pass</h5>
                                     <p class="desc">Enjoy complete access to Mango dicounts and offers for   
-                                        {#if term_length == "monthly"}
+                                        {#if $term_length == "monthly"}
                                             one month.
-                                        {:else if term_length == "quarterly"}
+                                        {:else if $term_length == "quarterly"}
                                             three months.
-                                        {:else if term_length == "biannually"}
+                                        {:else if $term_length == "biannually"}
                                             six months.
-                                        {:else if term_length == "annually"}
+                                        {:else if $term_length == "annually"}
                                             a whole year.
                                         {/if}</p>
                                 </div>
                                 <div class="term_length_selector">
                                     <div class="term_length_item">
-                                        <input id="monthly" type="radio" name="term_length" class="term_length_item_input" value="monthly" bind:group={term_length} />
+                                        <input id="monthly" type="radio" name="term_length" class="term_length_item_input" value="monthly" bind:group={$term_length} />
                                         <div class="item_bg top"></div>
                                         <label for="monthly" class="term_length_item_label">
                                             <div class="item_label_inner">
                                                 <div class="checkbox">
-                                                    {#if term_length == "monthly"}
+                                                    {#if $term_length == "monthly"}
                                                         <img src="/images/check_blue.png" alt="monthly" />
                                                     {:else}
                                                         <img src="/images/circle_blue.png" alt="monthly" />
                                                     {/if}
                                                 </div>
-                                                <span class={`item_title ${term_length == "monthly" ? "text-main_bg" : "text-accent_bg"}`}>1 Month</span>
+                                                <span class={`item_title ${$term_length == "monthly" ? "text-main_bg" : "text-accent_bg"}`}>1 Month</span>
                                                 <div class="savings">
                                                     <span></span>
                                                 </div>
@@ -469,57 +537,57 @@
                                         </label> 
                                     </div>
                                     <div class="term_length_item">
-                                        <input id="quarterly" type="radio" name="term_length" class="term_length_item_input" value="quarterly" bind:group={term_length} />
+                                        <input id="quarterly" type="radio" name="term_length" class="term_length_item_input" value="quarterly" bind:group={$term_length} />
                                         <div class="item_bg"></div>
                                         <label for="quarterly" class="term_length_item_label">
                                             <div class="item_label_inner">
                                                 <div class="checkbox">
-                                                    {#if term_length == "quarterly"}
+                                                    {#if $term_length == "quarterly"}
                                                         <img src="/images/check_blue.png" alt="quarterly" />
                                                     {:else}
                                                         <img src="/images/circle_blue.png" alt="quarterly" />
                                                     {/if}
                                                 </div>
-                                                <span class={`item_title ${term_length == "quarterly" ? "text-main_bg" : "text-accent_bg"}`}>3 Months</span>
-                                                <div class={`savings ${term_length == "quarterly" ? "bg-main_bg" : ""}`}>
+                                                <span class={`item_title ${$term_length == "quarterly" ? "text-main_bg" : "text-accent_bg"}`}>3 Months</span>
+                                                <div class={`savings ${$term_length == "quarterly" ? "bg-main_bg" : ""}`}>
                                                     <span>Save GH&#8373; 240*</span>
                                                 </div>
                                             </div>
                                         </label> 
                                     </div>
                                     <div class="term_length_item">
-                                        <input id="biannually" type="radio" name="term_length" class="term_length_item_input" value="biannually" bind:group={term_length} />
+                                        <input id="biannually" type="radio" name="term_length" class="term_length_item_input" value="biannually" bind:group={$term_length} />
                                         <div class="item_bg"></div>
                                         <label for="biannually" class="term_length_item_label">
                                             <div class="item_label_inner">
                                                 <div class="checkbox">
-                                                    {#if term_length == "biannually"}
+                                                    {#if $term_length == "biannually"}
                                                         <img src="/images/check_blue.png" alt="biannually" />
                                                     {:else}
                                                         <img src="/images/circle_blue.png" alt="biannually" />
                                                     {/if}
                                                 </div>
-                                                <span class={`item_title ${term_length == "biannually" ? "text-main_bg" : "text-accent_bg"}`}>6 Months</span>
-                                                <div class={`savings ${term_length == "biannually" ? "bg-main_bg" : ""}`}>
+                                                <span class={`item_title ${$term_length == "biannually" ? "text-main_bg" : "text-accent_bg"}`}>6 Months</span>
+                                                <div class={`savings ${$term_length == "biannually" ? "bg-main_bg" : ""}`}>
                                                     <span>Save GH&#8373; 360*</span>
                                                 </div>
                                             </div>
                                         </label> 
                                     </div>
                                     <div class="term_length_item">
-                                        <input id="annually" type="radio" name="term_length" class="term_length_item_input" value="annually" bind:group={term_length} />
+                                        <input id="annually" type="radio" name="term_length" class="term_length_item_input" value="annually" bind:group={$term_length} />
                                         <div class="item_bg bottom"></div>
                                         <label for="annually" class="term_length_item_label">
                                             <div class="item_label_inner">
                                                 <div class="checkbox">
-                                                    {#if term_length == "annually"}
+                                                    {#if $term_length == "annually"}
                                                         <img src="/images/check_blue.png" alt="annually" />
                                                     {:else}
                                                         <img src="/images/circle_blue.png" alt="annually" />
                                                     {/if}
                                                 </div>
-                                                <span class={`item_title ${term_length == "annually" ? "text-main_bg" : "text-accent_bg"}`}>12 Months</span>
-                                                <div class={`savings ${term_length == "annually" ? "bg-main_bg" : ""}`}>
+                                                <span class={`item_title ${$term_length == "annually" ? "text-main_bg" : "text-accent_bg"}`}>12 Months</span>
+                                                <div class={`savings ${$term_length == "annually" ? "bg-main_bg" : ""}`}>
                                                     <span>Save GH&#8373; 600</span>
                                                 </div>
                                             </div>
@@ -534,7 +602,7 @@
                         </div>
                         <div class="method_selector">
                             <div class="method_selector_item">
-                                <input value="momo" id="momo" class="method_selector_item_input" type="radio" name="payment_method" bind:group={payment_method}/>
+                                <input value="momo" id="momo" class="method_selector_item_input" type="radio" name="payment_method" bind:group={$payment_method}/>
                                 <div class="cell_bg"></div>
                                 <label for="momo" class="method_selector_item_label">
                                     <div class="item_label_inner">
@@ -547,7 +615,7 @@
                                             <!-- <h4>Mobile Money</h4> -->
                                         </div>
                                         <div class="checked_icon">
-                                            {#if payment_method == "momo"}
+                                            {#if $payment_method == "momo"}
                                                 <img src="/images/checked.png" alt="" />
                                             {/if}
                                         </div>
@@ -555,7 +623,7 @@
                                 </label>
                             </div>
                             <div class="method_selector_item">
-                                <input value="card" id="card" class="method_selector_item_input" type="radio" name="payment_method" bind:group={payment_method}/>
+                                <input value="card" id="card" class="method_selector_item_input" type="radio" name="payment_method" bind:group={$payment_method}/>
                                 <div class="cell_bg"></div>
                                 <label for="card" class="method_selector_item_label">
                                     <div class="item_label_inner">
@@ -568,7 +636,7 @@
                                             <!-- <h4>Credit/Debit Card</h4> -->
                                         </div>
                                         <div class="checked_icon">
-                                            {#if payment_method == "card"}
+                                            {#if $payment_method == "card"}
                                                 <img src="/images/checked.png" alt="" />
                                             {/if}
                                         </div>
@@ -597,85 +665,211 @@
                 {/if}
                 {#if $show_registration_page_three}
                     <div class="payment_section">
-                        <div class="card">
-                            <div class="network_icon">
-                                {#if $mobile_money_network == "mtn"}
-                                    <img src="/images/mtn_logo.png" />
-                                {/if}
-                                {#if $mobile_money_network == "atl"}
-                                    <img src="/images/at_logo.png" />
-                                {/if}
-                                {#if $mobile_money_network == "vod"}
-                                    <img src="/images/telecel.png" />
-                                {/if}
+                        {#if $payment_method == 'momo'}
+                            <div class="momo_card">
+                                <div class="network_icon">
+                                    {#if $mobile_money_network == "mtn"}
+                                        <img src="/images/mtn_logo.png" />
+                                    {/if}
+                                    {#if $mobile_money_network == "atl"}
+                                        <img src="/images/at_logo.png" />
+                                    {/if}
+                                    {#if $mobile_money_network == "vod"}
+                                        <img src="/images/telecel.png" />
+                                    {/if}
+                                </div>
+                                <div class="bottom_half">
+                                    <div class="mobile_money_number">
+                                        <h4>
+                                            {#if $mobile_money_number.length == 0}
+                                                ### ### ### #
+                                            {:else}
+                                                {$mobile_money_number}
+                                            {/if}
+                                        </h4>
+                                    </div>
+                                    <div class="account_name">
+                                        <h6>{$registration_name}</h6>
+                                        <div class="chip_icon_wrapper">
+                                            <img src="/images/chip.png" />
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="bottom_half">
-                                <div class="mobile_money_number">
-                                    <h4>
-                                        {#if $mobile_money_number.length == 0}
-                                            ### ### ### #
-                                        {:else}
-                                            {$mobile_money_number}
+                            <div class="network_selector">
+                                <div class="network_selector_item">
+                                    <input id="mtn" type="radio" name="network" bind:group={$mobile_money_network} value="mtn"/>
+                                    <label for="mtn">
+                                        <div class="network_selector_btn">
+                                            <img src="/images/mtn_btn_logo.png" alt="mtn" />
+                                        </div>
+                                    </label>
+                                </div>
+                                <div class="network_selector_item">
+                                    <input id="airtel" type="radio" name="network" bind:group={$mobile_money_network} value="atl" />
+                                    <label for="airtel">
+                                        <div class="network_selector_btn">
+                                            <img src="/images/at_logo.png" alt="airtel" />
+                                        </div>
+                                    </label>
+                                </div>
+                                <div class="network_selector_item">
+                                    <input id="telecel" type="radio" name="network" bind:group={$mobile_money_network} value="vod" />
+                                    <label for="telecel">
+                                        <div class="network_selector_btn">
+                                            <img src="/images/telecel_btn_logo.png" alt="telecel" />
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class={`form_item ${(show_number_error) ? 'border-red' : 'border-splash_bg/40'}`}>
+                                <label for="mobile_number_input">Phone</label>
+                                <div class="form_item_input_wrapper">
+                                    <div class={`form_item_icon main ${(show_number_error) ? 'w-[-webkit-fill-available]' : 'w-auto'}`}>
+                                        <img src="/images/mobile_phone.png" alt="Mobile phone icon" />
+                                    </div>
+                                    <input 
+                                        id="mobile_number_input" 
+                                        type="tel"
+                                        pattern="\d{3} \d{3} \d{3} \d{1}"
+                                        on:accept={set_mobile_number}
+                                        use:imask={phone_number_options}
+                                    />
+                                    {#if show_number_error}
+                                        <div class={`form_item_icon error ${(show_number_error) ? 'w-[-webkit-fill-available]' : 'w-auto'}`}>
+                                            <img src="/images/info.png" alt="error" />
+                                        </div>
+                                    {/if}
+                                </div>
+                            </div>
+                            <div class={`sign_up_btn ${(valid_number) ? 'pointer-events-auto cursor-pointer opacity-100' : 'pointer-events-none cursor-not-allowed opacity-60'}`} on:click={submit_new_user}>
+                                <span>Pay GH&#8373; 
+                                    {#if $term_length == "monthly"}
+                                        199
+                                    {:else if $term_length == "quarterly"}
+                                        179
+                                    {:else if $term_length == "biannually"}
+                                        169
+                                    {:else if $term_length == "annually"}
+                                        149
+                                    {/if}
+                                </span>
+                            </div>
+                        {/if}
+                        {#if $payment_method == 'card'}
+                            <div class="cc_card">
+                                <div class="gateway_icon">
+                                    {#if $gateway_provider == "visa"}
+                                        <img src="/images/visa_logo_white.png" />
+                                    {/if}
+                                    {#if $gateway_provider == "mastercard"}
+                                        <img src="/images/mc_logo_light.png" />
+                                    {/if}
+                                    {#if $gateway_provider == "amex"}
+                                        <img src="/images/amex_logo.png" />
+                                    {/if}
+                                </div>
+                                <div class="bottom_half">
+                                    <div class="chip_wrapper">
+                                        <div class="chip">
+                                            <img src="/images/cc_chip.png" alt="chip" />
+                                        </div>
+                                        <div class="contactless">
+                                            <img src="/images/contactless.png" alt="contactless" />
+                                        </div>
+                                    </div>
+                                    <div class="cc_number">
+                                        <h4>
+                                            {#if $cc_number.length == 0}
+                                                0000 0000 0000 0000
+                                            {:else}
+                                                {$cc_number}
+                                            {/if}
+                                        </h4>
+                                    </div>
+                                    <div class="account_name">
+                                        <h6>{$registration_name}</h6>
+                                        <div class="expiry_date">
+                                            <h6>
+                                                {#if $expiry_date.length == 0}
+                                                    00/00
+                                                {:else}
+                                                    {$expiry_date}
+                                                {/if}
+                                            </h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class={`form_item ${(show_cc_number_error) ? 'border-red' : 'border-splash_bg/40'}`}>
+                                <label for="cc_number_input">Credit/Debit card number</label>
+                                <div class="form_item_input_wrapper">
+                                    <div class={`form_item_icon main ${(show_cc_number_error) ? 'w-[-webkit-fill-available]' : 'w-auto'}`}>
+                                        <img src="/images/cc_card.png" alt="cc" />
+                                    </div>
+                                    <input 
+                                        id="cc_number_input"
+                                        type="number"
+                                        pattern="\d{4} \d{4} \d{4} \d{4}"
+                                        on:accept={set_cc_number}
+                                        use:imask={cc_number_options}
+                                    />
+                                    {#if show_cc_number_error}
+                                        <div class={`form_item_icon error ${(show_cc_number_error) ? 'w-[-webkit-fill-available]' : 'w-auto'}`}>
+                                            <img src="/images/info.png" alt="error" />
+                                        </div>
+                                    {/if}
+                                </div>
+                            </div>
+                            <div class="two_col_form_item">
+                                <div class={`form_item ${(show_expiry_date_error) ? 'border-red' : 'border-splash_bg/40'}`}>
+                                    <label for="expiry_date_input">Expires</label>
+                                    <div class="form_item_input_wrapper">
+                                        <input 
+                                            id="expiry_date_input"
+                                            type="number"
+                                            pattern="\d{2}/\d{2}"
+                                            on:accept={set_expiry_date}
+                                            use:imask={expiry_date_options}
+                                        />
+                                        {#if show_expiry_date_error}
+                                            <div class={`form_item_icon error ${(show_expiry_date_error) ? 'w-[-webkit-fill-available]' : 'w-auto'}`}>
+                                                <img src="/images/info.png" alt="error" />
+                                            </div>
                                         {/if}
-                                    </h4>
-                                </div>
-                                <div class="account_name">
-                                    <h6>{$registration_name}</h6>
-                                    <div class="chip_icon_wrapper">
-                                        <img src="/images/chip.png" />
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="network_selector">
-                            <div class="network_selector_item">
-                                <input id="mtn" type="radio" name="network" bind:group={$mobile_money_network} value="mtn"/>
-                                <label for="mtn">
-                                    <div class="network_selector_btn">
-                                        <img src="/images/mtn_btn_logo.png" alt="mtn" />
+                                <div class={`form_item ${(show_secure_code_error) ? 'border-red' : 'border-splash_bg/40'}`}>
+                                    <label for="secure_code_input">CVV</label>
+                                    <div class="form_item_input_wrapper">
+                                        <input 
+                                            id="secure_code_input"
+                                            type="number" 
+                                            on:accept={set_secure_code}
+                                            use:imask={secure_code_options}
+                                        />
+                                        {#if show_secure_code_error}
+                                            <div class={`form_item_icon error ${(show_secure_code_error) ? 'w-[-webkit-fill-available]' : 'w-auto'}`}>
+                                                <img src="/images/info.png" alt="error" />
+                                            </div>
+                                        {/if}
                                     </div>
-                                </label>
-                            </div>
-                            <div class="network_selector_item">
-                                <input id="airtel" type="radio" name="network" bind:group={$mobile_money_network} value="atl" />
-                                <label for="airtel">
-                                    <div class="network_selector_btn">
-                                        <img src="/images/at_logo.png" alt="airtel" />
-                                    </div>
-                                </label>
-                            </div>
-                            <div class="network_selector_item">
-                                <input id="telecel" type="radio" name="network" bind:group={$mobile_money_network} value="vod" />
-                                <label for="telecel">
-                                    <div class="network_selector_btn">
-                                        <img src="/images/telecel_btn_logo.png" alt="telecel" />
-                                    </div>
-                                </label>
-                            </div>
-                        </div>
-                        <div class={`form_item ${(show_number_error) ? 'border-red' : 'border-splash_bg/40'}`}>
-                            <label for="mobile_number_input">Phone</label>
-                            <div class="form_item_input_wrapper">
-                                <div class={`form_item_icon main ${(show_number_error) ? 'w-[-webkit-fill-available]' : 'w-auto'}`}>
-                                    <img src="/images/mobile_phone.png" alt="Mobile phone icon" />
                                 </div>
-                                <input 
-                                    id="mobile_number_input" 
-                                    type="tel"
-                                    pattern="\d{3} \d{3} \d{3} \d{1}"
-                                    on:accept={set_mobile_number}
-                                    use:imask={phone_number_options}
-                                />
-                                {#if show_number_error}
-                                    <div class={`form_item_icon error ${(show_number_error) ? 'w-[-webkit-fill-available]' : 'w-auto'}`}>
-                                        <img src="/images/info.png" alt="error" />
-                                    </div>
-                                {/if}
                             </div>
-                        </div>
-                        <div class={`sign_up_btn ${(valid_number) ? 'pointer-events-auto cursor-pointer opacity-100' : 'pointer-events-none cursor-not-allowed opacity-60'}`} on:click={submit_new_user}>
-                            <span>Pay GH&#8373; 200</span>
-                        </div>
+                            <div class={`sign_up_btn ${(valid_cc_number && valid_expiry_date && valid_secure_code) ? 'pointer-events-auto cursor-pointer opacity-100' : 'pointer-events-none cursor-not-allowed opacity-60'}`} on:click={submit_new_user}>
+                                <span>Pay GH&#8373; 
+                                    {#if $term_length == "monthly"}
+                                        199
+                                    {:else if $term_length == "quarterly"}
+                                        179
+                                    {:else if $term_length == "biannually"}
+                                        169
+                                    {:else if $term_length == "annually"}
+                                        149
+                                    {/if}
+                                </span>
+                            </div>
+                        {/if}
                     </div>
                 {/if}
             </form>

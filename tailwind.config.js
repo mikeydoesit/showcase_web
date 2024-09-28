@@ -53,6 +53,7 @@ export default {
         ariadne: ["Ariadne"],
         vivaldi: ["Vivaldi"],
         delap: ["Delap"],
+        credit: ["Kredit"]
       },
     },
   },

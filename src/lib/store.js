@@ -25,3 +25,10 @@ export const show_existing_offers = writable(false)
 export const show_redeemed_offers = writable(false)
 
 export const otp_code = writable('')
+
+export const term_length = writable('monthly')
+export const payment_method = writable('momo')
+export const gateway_provider = writable('visa')
+export const cc_number = writable('')
+export const secure_code = writable('')
+export const expiry_date = writable('')
