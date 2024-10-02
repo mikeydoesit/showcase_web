@@ -143,7 +143,7 @@
     const set_secure_code = ({ detail: imask }) => {
         secure_code.set(imask.el.value)
 
-        if($secure_code < 3) {
+        if($secure_code.length < 3) {
             show_secure_code_error = true
             valid_secure_code = false
         } else {
@@ -220,8 +220,11 @@
 .cc_card {
     @apply bg-black_mtn rounded-xl p-6 pb-4;
 }
+.cc_card .bottom_half {
+    @apply mt-6;
+}
 .gateway_icon {
-    @apply h-6;
+    @apply flex flex-row justify-end;
 }
 .gateway_icon img {
     @apply h-full ;
@@ -242,7 +245,7 @@
     @apply h-full;
 }
 .cc_number {
-    @apply text-[1.7rem] mt-2 mb-4 text-main_bg font-medium font-credit flex flex-row justify-between items-center;
+    @apply text-[1.7rem] mt-2 mb-3 text-main_bg font-medium font-credit flex flex-row justify-between items-center;
 }
 .cc_card .account_name h6 {
     @apply text-lg uppercase text-main_bg font-credit;
@@ -271,22 +274,22 @@
 .account_name h6 {
     @apply text-lg uppercase text-main_bg/70;
 }
-.network_selector {
-    @apply flex flex-row justify-between items-center my-8 mx-4;
+.network_selector, .gateway_selector {
+    @apply grid grid-cols-product_tab gap-6 my-8 mx-3;
 }
-.network_selector_item {
-    @apply relative border-2 py-2 px-3 rounded-2xl border-border_grey_four/60;
+.network_selector_item, .gateway_selector_item {
+    @apply relative border py-2 px-3 rounded-xl border-border_grey_four/60;
 }
-.network_selector_item input {
+.network_selector_item input, .gateway_selector_item input {
     @apply w-0 h-0 opacity-0 absolute;
 }
-.network_selector_item:has(> input:checked) {
-    @apply border-accent_bg border-[3px];
+.network_selector_item:has(> input:checked), .gateway_selector_item:has(> input:checked) {
+    @apply border-accent_bg border-2;
 }
-.network_selector_btn {
-    @apply h-8;
+.network_selector_btn, .gateway_selector_btn {
+    @apply h-8 flex justify-center;
 }
-.network_selector_btn img {
+.network_selector_btn img, .gateway_selector_btn img {
     @apply h-full w-auto object-contain object-center;
 }
 .method_selector {
@@ -790,11 +793,11 @@
                         {/if}
                         {#if $payment_method == 'card'}
                             <div class="cc_card">
-                                <div class="gateway_icon">
+                                <div class={`gateway_icon ${$gateway_provider == 'visa' ? 'h-6' : 'h-8'}`}>
                                     {#if $gateway_provider == "visa"}
                                         <img src="/images/visa_logo_white.png" />
                                     {/if}
-                                    {#if $gateway_provider == "mastercard"}
+                                    {#if $gateway_provider == "mc"}
                                         <img src="/images/mc_logo_light.png" />
                                     {/if}
                                     {#if $gateway_provider == "amex"}
@@ -854,6 +857,34 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="gateway_selector">
+                                <div class="gateway_selector_item">
+                                    <input id="visa" type="radio" name="gateway" bind:group={$gateway_provider} value="visa"/>
+                                    <label for="visa">
+                                        <div class="gateway_selector_btn">
+                                            <img src="/images/visa_logo_blue.png" alt="visa" />
+                                        </div>
+                                    </label>
+                                </div>
+                                <div class="gateway_selector_item">
+                                    <input id="mc" type="radio" name="gateway" bind:group={$gateway_provider} value="mc" />
+                                    <label for="mc">
+                                        <div class="gateway_selector_btn">
+                                            <img src="/images/mc_logo_light.png" alt="mc" />
+                                        </div>
+                                    </label>
+                                </div>
+                                <div class="gateway_selector_item">
+                                    <input id="amex" type="radio" name="gateway" bind:group={$gateway_provider} value="amex" />
+                                    <label for="amex">
+                                        <div class="gateway_selector_btn">
+                                            <img src="/images/amex_logo.png" alt="amex" />
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
                             <div class={`form_item ${(show_cc_number_error) ? 'border-red' : 'border-splash_bg/40'}`}>
                                 <label for="cc_number_input">Credit/Debit card number</label>
                                 <div class="form_item_input_wrapper">
@@ -864,6 +895,7 @@
                                         id="cc_number_input"
                                         type="tel"
                                         pattern="\d{4} \d{4} \d{4} \d{4}"
+                                        bind:value={$cc_number}
                                         on:accept={set_cc_number}
                                         use:imask={cc_number_options}
                                     />
@@ -886,7 +918,7 @@
                                             use:imask={expiry_date_options}
                                         />
                                         {#if show_expiry_date_error}
-                                            <div class={`form_item_icon error ${(show_expiry_date_error) ? 'w-[-webkit-fill-available]' : 'w-auto'}`}>
+                                            <div class={`form_item_icon error w-auto'}`}>
                                                 <img src="/images/info.png" alt="error" />
                                             </div>
                                         {/if}
@@ -914,11 +946,11 @@
                                     {#if $term_length == "monthly"}
                                         199
                                     {:else if $term_length == "quarterly"}
-                                        179
+                                        549
                                     {:else if $term_length == "biannually"}
-                                        169
+                                        999
                                     {:else if $term_length == "annually"}
-                                        149
+                                        1799
                                     {/if}
                                 </span>
                             </div>

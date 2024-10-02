@@ -7,17 +7,17 @@
     import AvatarUploader from '../../../components/AvatarUploader.svelte'
     import { onMount } from 'svelte'
     import { goto } from '$app/navigation';
-    import { show_registration, show_login, registration_email, registration_name, registration_password, show_avatar_uploader_form, avatar_uploader_input, mobile_money_network, mobile_money_number } from '$lib/store'
+    import { show_registration, show_login, registration_email, registration_name, registration_password, show_avatar_uploader_form, avatar_uploader_input, mobile_money_network, mobile_money_number, term_length, payment_method } from '$lib/store'
     import { pocketbase, currentUser } from '$lib/pocketbase.js'
     import bcrypt from 'bcryptjs';
 
-    // let popup
+    let popup
     
-    // onMount(async () => {
-    //     const module = await import('@paystack/inline-js');
-    //     const Paystack = module.default;
-    //     popup = new Paystack();
-    // })
+    onMount(async () => {
+        const module = await import('@paystack/inline-js');
+        const Paystack = module.default;
+        popup = new Paystack();
+    })
 
     let authorised = false
     let unauthorised = true
@@ -61,36 +61,95 @@
                 goto('/profile')
             }
         }
+        pocketbase.collection('users').unsubscribe('*');
     }
     const signup = async () => {
-        const new_user = {
-            name: $registration_name,
-            email: $registration_email,
-            auth: $registration_password,
-            network: $mobile_money_network,
-            momo_number: $mobile_money_number
-        }
-        try {
-            // Send user and payment details to the backend
-            const response = await fetch(`${PUBLIC_POCKETBASE_URL}/api/signup`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(new_user),
-            });
 
-            const data = await response.json();
-
-            if(data.data.status == "success") {
-                console.log(data.data)
-                setTimeout(() => {
-                    login()
-                }, 4000)
+        if($payment_method == 'momo') {
+            const new_user = {
+                name: $registration_name,
+                email: $registration_email,
+                auth: $registration_password,
+                network: $mobile_money_network,
+                momo_number: $mobile_money_number,
+                term_length: $term_length,
+                method: $payment_method
             }
-            
-        } catch (error) {
-            console.error(error)
+            try {
+                // Send user and payment details to the backend
+                const response = await fetch(`${PUBLIC_POCKETBASE_URL}/api/signup`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(new_user),
+                });
+
+                const data = await response.json();
+
+                if(data.data.status == "success") {
+                    console.log(data.data)
+
+                    try {
+                        // Subscribe to changes in any users record
+                        await pocketbase.collection('users').subscribe(`*`, function (e) {
+                            console.log(e.record)
+                            if(e.record.email == $registration_email && e.record.is_subscriber) {
+                                login()
+                            }
+                        });
+                    } catch (error) {
+                        console.error(error)
+                    }
+                }
+                
+            } catch (error) {
+                console.error(error)
+            }
+        }
+
+        if($payment_method == 'card') {
+            const new_user = {
+                name: $registration_name,
+                email: $registration_email,
+                auth: $registration_password,
+                term_length: $term_length,
+                method: $payment_method
+            }
+
+            try {
+                // Send user and payment details to the backend
+                const response = await fetch(`${PUBLIC_POCKETBASE_URL}/api/signup`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(new_user),
+                });
+
+                const data = await response.json();
+
+                if(data.status == true) {
+                    console.log(data)
+
+                    popup.resumeTransaction(data.data.access_code)
+
+                    try {
+                        // Subscribe to changes in any users record
+                        await pocketbase.collection('users').subscribe(`*`, function (e) {
+                            console.log(e.record)
+                            if(e.record.email == $registration_email && e.record.is_subscriber) {
+                                login()
+                            }
+                        });
+                    } catch (error) {
+                        console.error(error)
+                    } 
+                }
+                
+            } catch (error) {
+                console.error(error)
+            }
         }
     }
 </script>
