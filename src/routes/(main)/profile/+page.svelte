@@ -9,7 +9,6 @@
     import { goto } from '$app/navigation';
     import { show_registration, show_login, registration_email, registration_name, registration_password, show_avatar_uploader_form, avatar_uploader_input, mobile_money_network, mobile_money_number, term_length, payment_method } from '$lib/store'
     import { pocketbase, currentUser } from '$lib/pocketbase.js'
-    import bcrypt from 'bcryptjs';
 
     let popup
     
@@ -65,6 +64,8 @@
     }
     const signup = async () => {
 
+        submitting_new_user = true
+
         if($payment_method == 'momo') {
             const new_user = {
                 name: $registration_name,
@@ -88,12 +89,9 @@
                 const data = await response.json();
 
                 if(data.data.status == "success") {
-                    console.log(data.data)
-
                     try {
                         // Subscribe to changes in any users record
                         await pocketbase.collection('users').subscribe(`*`, function (e) {
-                            console.log(e.record)
                             if(e.record.email == $registration_email && e.record.is_subscriber) {
                                 login()
                             }
@@ -130,14 +128,11 @@
                 const data = await response.json();
 
                 if(data.status == true) {
-                    console.log(data)
-
                     popup.resumeTransaction(data.data.access_code)
 
                     try {
                         // Subscribe to changes in any users record
                         await pocketbase.collection('users').subscribe(`*`, function (e) {
-                            console.log(e.record)
                             if(e.record.email == $registration_email && e.record.is_subscriber) {
                                 login()
                             }
