@@ -1,7 +1,7 @@
 <script>
 	import { slide } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
-    import { show_login, registration_email, registration_password } from '$lib/store.js';
+    import { show_login, registration_email, registration_password, logging_in } from '$lib/store.js';
 
     export let signin;
 
@@ -99,6 +99,76 @@
 .sign_up_btn {
     @apply bg-splash_bg text-main_bg text-lg font-bold w-11/12 py-4 flex justify-center items-center rounded-lg mx-auto mt-2;
 }
+
+/* LOADER STYLES */
+
+.loader_wrapper {
+        @apply h-fit w-full flex justify-center items-center;
+    }
+    .spinner {
+        --size: 7.5px;
+        --first-block-clr: #990033;
+        --second-block-clr: #FFFFFF;
+        --clr: #111;
+        width: 25px;
+        height: 25px;
+        position: relative;
+    }
+
+    .spinner::after,.spinner::before {
+        box-sizing: border-box;
+        position: absolute;
+        content: "";
+        width: var(--size);
+        height: var(--size);
+        top: 50%;
+        animation: up 2.4s cubic-bezier(0, 0, 0.24, 1.21) infinite;
+        left: 50%;
+        background: var(--first-block-clr);
+    }
+
+    .spinner::after {
+        background: var(--second-block-clr);
+        top: calc(50% - var(--size));
+        left: calc(50% - var(--size));
+        animation: down 2.4s cubic-bezier(0, 0, 0.24, 1.21) infinite;
+    }
+
+    @keyframes down {
+        0%, 100% {
+            transform: none;
+        }
+
+        25% {
+            transform: translateX(100%);
+        }
+
+        50% {
+            transform: translateX(100%) translateY(100%);
+        }
+
+        75% {
+            transform: translateY(100%);
+        }
+    }
+
+    @keyframes up {
+        0%, 100% {
+            transform: none;
+        }
+
+        25% {
+            transform: translateX(-100%);
+        }
+
+        50% {
+            transform: translateX(-100%) translateY(-100%);
+        }
+
+        75% {
+            transform: translateY(-100%);
+        }
+    }
 </style>
 
 <div class="login">
@@ -145,10 +215,17 @@
                         {/if}
                     </div>
                 </div>
-
-                <div class={`sign_up_btn ${(valid_email && valid_pwd) ? 'pointer-events-auto cursor-pointer opacity-100' : 'pointer-events-none cursor-not-allowed opacity-60'}`} on:click={signin}>
-                    <span>Sign in</span>
-                </div>
+                {#if $logging_in}
+                    <div class="sign_up_btn pointer-events-auto cursor-not-allowed opacity-100">
+                        <div class="loader_wrapper">
+                            <div class="spinner"></div>
+                        </div>
+                    </div>
+                {:else}
+                    <div class={`sign_up_btn ${(valid_email && valid_pwd) ? 'pointer-events-auto cursor-pointer opacity-100' : 'pointer-events-none cursor-not-allowed opacity-60'}`} on:click={signin}>
+                        <span>Sign in</span>
+                    </div>
+                {/if}
             </form>
         </div>
     </div>

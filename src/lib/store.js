@@ -30,6 +30,9 @@ export const otp_code = writable('')
 
 export const term_length = writable('monthly')
 export const payment_method = writable('momo')
+
+export const submitting_new_user = writable(false)
+export const logging_in = writable(false)
 // export const gateway_provider = writable('visa')
 // export const cc_number = writable('')
 // export const cc_number_to_display = writable([])

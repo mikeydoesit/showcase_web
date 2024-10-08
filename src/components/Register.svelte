@@ -1,7 +1,7 @@
 <script>
 	import { slide, fade } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
-    import { show_registration, registration_email, registration_name, registration_password, registration_number, show_registration_page_one, show_registration_page_two, show_registration_page_three, show_registration_page_four, show_registration_page_five, mobile_money_number, mobile_money_network, payment_method, term_length } from '$lib/store.js';
+    import { show_registration, registration_email, registration_name, registration_password, registration_number, show_registration_page_one, show_registration_page_two, show_registration_page_three, show_registration_page_four, show_registration_page_five, mobile_money_number, mobile_money_network, payment_method, term_length, submitting_new_user } from '$lib/store.js';
     import { imask } from '@imask/svelte';
 
     export let submit_new_user;
@@ -126,50 +126,50 @@
     }
 
 
-    const set_cc_number = ({ detail: imask }) => {
-        cc_number.set(imask.el.value)
+    // const set_cc_number = ({ detail: imask }) => {
+    //     cc_number.set(imask.el.value)
 
-        cc_number_to_display.set($cc_number.split(" "))
+    //     cc_number_to_display.set($cc_number.split(" "))
 
-        const regex = /^\d{4} \d{4} \d{4} \d{4}$/;
+    //     const regex = /^\d{4} \d{4} \d{4} \d{4}$/;
 
-        if (regex.test($cc_number)) {
-            show_cc_number_error = false
-            valid_cc_number = true
-        } else {
-            show_cc_number_error = true
-            valid_cc_number = false
-        }
-    }
-    const set_expiry_date = ({ detail: imask }) => {
+    //     if (regex.test($cc_number)) {
+    //         show_cc_number_error = false
+    //         valid_cc_number = true
+    //     } else {
+    //         show_cc_number_error = true
+    //         valid_cc_number = false
+    //     }
+    // }
+    // const set_expiry_date = ({ detail: imask }) => {
 
-        let deconstructed = []
+    //     let deconstructed = []
 
-        expiry_date.set(imask.el.value)
+    //     expiry_date.set(imask.el.value)
 
-        if ($expiry_date.length == 5) {
-            deconstructed = $expiry_date.split("/")
-        }
+    //     if ($expiry_date.length == 5) {
+    //         deconstructed = $expiry_date.split("/")
+    //     }
         
-        if (deconstructed[0] < 1 || deconstructed[0] > 12 || deconstructed[1] < 24 || deconstructed[0] == undefined) {
-            show_expiry_date_error = true
-            valid_expiry_date = false
-        } else {
-            show_expiry_date_error = false
-            valid_expiry_date = true
-        }
-    }
-    const set_secure_code = ({ detail: imask }) => {
-        secure_code.set(imask.el.value)
+    //     if (deconstructed[0] < 1 || deconstructed[0] > 12 || deconstructed[1] < 24 || deconstructed[0] == undefined) {
+    //         show_expiry_date_error = true
+    //         valid_expiry_date = false
+    //     } else {
+    //         show_expiry_date_error = false
+    //         valid_expiry_date = true
+    //     }
+    // }
+    // const set_secure_code = ({ detail: imask }) => {
+    //     secure_code.set(imask.el.value)
 
-        if($secure_code.length < 3) {
-            show_secure_code_error = true
-            valid_secure_code = false
-        } else {
-            show_secure_code_error = false
-            valid_secure_code = true
-        }
-    }
+    //     if($secure_code.length < 3) {
+    //         show_secure_code_error = true
+    //         valid_secure_code = false
+    //     } else {
+    //         show_secure_code_error = false
+    //         valid_secure_code = true
+    //     }
+    // }
     const formatDate = (dateString) => {
         let locale = Intl.DateTimeFormat().resolvedOptions().locale;
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -482,6 +482,76 @@
 .total .key, .total .value {
     @apply text-black text-lg font-bold;
 }
+
+/* LOADER STYLES */
+
+.loader_wrapper {
+        @apply h-fit w-full flex justify-center items-center;
+    }
+    .spinner {
+        --size: 7.5px;
+        --first-block-clr: #990033;
+        --second-block-clr: #FFFFFF;
+        --clr: #111;
+        width: 25px;
+        height: 25px;
+        position: relative;
+    }
+
+    .spinner::after,.spinner::before {
+        box-sizing: border-box;
+        position: absolute;
+        content: "";
+        width: var(--size);
+        height: var(--size);
+        top: 50%;
+        animation: up 2.4s cubic-bezier(0, 0, 0.24, 1.21) infinite;
+        left: 50%;
+        background: var(--first-block-clr);
+    }
+
+    .spinner::after {
+        background: var(--second-block-clr);
+        top: calc(50% - var(--size));
+        left: calc(50% - var(--size));
+        animation: down 2.4s cubic-bezier(0, 0, 0.24, 1.21) infinite;
+    }
+
+    @keyframes down {
+        0%, 100% {
+            transform: none;
+        }
+
+        25% {
+            transform: translateX(100%);
+        }
+
+        50% {
+            transform: translateX(100%) translateY(100%);
+        }
+
+        75% {
+            transform: translateY(100%);
+        }
+    }
+
+    @keyframes up {
+        0%, 100% {
+            transform: none;
+        }
+
+        25% {
+            transform: translateX(-100%);
+        }
+
+        50% {
+            transform: translateX(-100%) translateY(-100%);
+        }
+
+        75% {
+            transform: translateY(-100%);
+        }
+    }
 </style>
 
 <div class="registration">
@@ -881,20 +951,17 @@
                             <img src="/images/back_chevron.png" alt="back" />
                         </div>
                         {#if $payment_method == 'card'}
-                            <div class="sign_up_btn pointer-events-auto cursor-pointer opacity-100" on:click={submit_new_user}>
-                                <!-- <span>Pay GH&#8373; 
-                                    {#if $term_length == "monthly"}
-                                        199
-                                    {:else if $term_length == "quarterly"}
-                                        179
-                                    {:else if $term_length == "biannually"}
-                                        169
-                                    {:else if $term_length == "annually"}
-                                        149
-                                    {/if}
-                                </span> -->
-                                <span>Next</span>
-                            </div>
+                            {#if $submitting_new_user}
+                                <div class="sign_up_btn pointer-events-auto cursor-pointer opacity-100">
+                                    <div class="loader_wrapper">
+                                        <div class="spinner"></div>
+                                    </div>
+                                </div>
+                            {:else}
+                                <div class="sign_up_btn pointer-events-auto cursor-pointer opacity-100" on:click={submit_new_user}>
+                                    <span>Next</span>
+                                </div>
+                            {/if}
                         {:else if $payment_method == 'momo'}
                             <div class={`sign_up_btn pointer-events-auto cursor-pointer opacity-100`} on:click={go_to_page_five}>
                                 <span>Next</span>
@@ -993,19 +1060,27 @@
                             <div class="back_btn" on:click={go_to_page_three}>
                                 <img src="/images/back_chevron.png" alt="back" />
                             </div>
-                            <div class={`sign_up_btn ${(valid_number) ? 'pointer-events-auto cursor-pointer opacity-100' : 'pointer-events-none cursor-not-allowed opacity-60'}`} on:click={submit_new_user}>
-                                <span>Pay GH&#8373; 
-                                    {#if $term_length == "monthly"}
-                                        199
-                                    {:else if $term_length == "quarterly"}
-                                        549
-                                    {:else if $term_length == "biannually"}
-                                        999
-                                    {:else if $term_length == "annually"}
-                                        1799
-                                    {/if}
-                                </span>
-                            </div>
+                            {#if $submitting_new_user}
+                                <div class="sign_up_btn pointer-events-auto cursor-pointer opacity-100">
+                                    <div class="loader_wrapper">
+                                        <div class="spinner"></div>
+                                    </div>
+                                </div>
+                            {:else}
+                                <div class={`sign_up_btn ${(valid_number) ? 'pointer-events-auto cursor-pointer opacity-100' : 'pointer-events-none cursor-not-allowed opacity-60'}`} on:click={submit_new_user}>
+                                    <span>Pay GH&#8373; 
+                                        {#if $term_length == "monthly"}
+                                            199
+                                        {:else if $term_length == "quarterly"}
+                                            549
+                                        {:else if $term_length == "biannually"}
+                                            999
+                                        {:else if $term_length == "annually"}
+                                            1799
+                                        {/if}
+                                    </span>
+                                </div>
+                            {/if}
                         </div>
                     {/if}
                 {/if}
