@@ -1,4 +1,5 @@
 <script>
+    import { PUBLIC_POCKETBASE_URL, PUBLIC_MAPS_API } from '$env/static/public';
     import { show_deal, show_business_info, show_business_review } from '$lib/store.js'
     import { currentUser } from '$lib/pocketbase'
     import { goto } from '$app/navigation';
@@ -6,6 +7,7 @@
     export let product_obj
     export let pb
     export let offer_added_to_user
+    export let seller_obj
 
     let current_offers
 
@@ -68,6 +70,7 @@
         show_deal.set(false)
         show_business_info.set(true)
     }
+    console.log(seller_obj)
 </script>
 
 <style lang="postcss">
@@ -167,6 +170,51 @@
     }
     .lock_icon {
         @apply w-5 ml-2;
+    }
+
+    /* business info tab */
+    .business_info_tab_content {
+        @apply mt-6 px-3 flex flex-col;
+    }
+    .business_info_heading {
+        @apply flex flex-row gap-8 items-center;
+    }
+    .logo_wrapper {
+        @apply h-auto w-auto rounded-lg;
+        box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+    }
+    .logo_wrapper .logo {
+        @apply h-20 w-20 object-center object-contain p-0.5;
+    }
+    .business_name {
+        @apply text-2xl font-semibold text-black;
+    }
+    .business_desc_wrapper {
+        @apply mt-12 text-black;
+    }
+    .title {
+        @apply text-xl font-semibold pb-1.5 text-black;
+    }
+    .business_desc_wrapper .business_desc {
+        @apply text-justify font-light;
+    }
+    .business_meta {
+        @apply mt-6 text-black;
+    }
+    .business_meta .meta_item {
+        @apply flex flex-row justify-between items-center mb-2;
+    }
+    .business_meta .meta_item .key {
+        @apply text-lg font-semibold;
+    }
+    .business_meta .meta_item .value {
+        @apply font-light;
+    }
+    .business_location_wrapper {
+        @apply mt-6;
+    }
+    .business_location {
+        @apply h-44 w-full mt-2;
     }
 </style>
 
@@ -303,7 +351,56 @@
     {/if}
     {#if $show_business_info}
         <div class="business_info_tab_content">
-
+            <div class="business_info_heading">
+                <div class="logo_wrapper">
+                    {#if seller_obj.logo != ''}
+                        <img class="logo" src={`${PUBLIC_POCKETBASE_URL}/api/files/merchants/${seller_obj.id}/${seller_obj.logo}`} alt="logo" />
+                    {/if}
+                </div>
+                <div class="business_name_wrapper">
+                    {#if seller_obj.business_name}
+                        <h2 class="business_name">{seller_obj.business_name}</h2>
+                    {/if}
+                </div>
+            </div>
+            <div class="business_desc_wrapper">
+                <h3 class="title">About</h3>
+                {#if seller_obj.desc != ''}
+                    <p class="business_desc">{seller_obj.desc}</p>
+                {:else}
+                    <p class="business_desc">Nami Beauty Ltd is a beauty spa offering a range of beauty services including BIAB (Builder In A Bottle), manicures, pedicures, brows, lashes, makeup, and more. The spa has a serene and luxurious atmosphere aimed at providing a relaxing experience for its clients.</p>
+                {/if}
+            </div>
+            <div class="business_meta">
+                <div class="meta_item">
+                    <span class="key">Category</span>
+                    {#if seller_obj.business_category}
+                        <span class="value">{seller_obj.business_category}</span>
+                    {/if}
+                </div>
+                <div class="meta_item">
+                    <span class="key">Phone</span>
+                    {#if seller_obj.contact_number}
+                        <span class="value">{seller_obj.contact_number}</span>
+                    {/if}
+                </div>
+            </div>
+            <div class="business_location_wrapper">
+                <h3 class="title">Location</h3>
+                <div class="business_location">
+                    {#if seller_obj.business_name}
+                        <iframe
+                            loading="lazy"
+                            width="100%"
+                            height="100%"
+                            frameborder="0" style="border:0"
+                            referrerpolicy="no-referrer-when-downgrade"
+                            src={`https://www.google.com/maps/embed/v1/place?key=${PUBLIC_MAPS_API}&q=${seller_obj.business_name.split(' ').join('+')},Accra`}
+                            allowfullscreen>
+                        </iframe>
+                    {/if}
+                </div>
+            </div>
         </div>
     {/if}
 </section>

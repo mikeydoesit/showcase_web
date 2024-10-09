@@ -50,6 +50,7 @@
     />
     <ProductContent
         product_obj={product}
+        seller_obj={seller}
         pb={pocketbase}
         offer_added_to_user={offer_added}
      />
