@@ -1,4 +1,5 @@
 <script>
+    import { show_deal, show_business_info, show_business_review } from '$lib/store.js'
     import { currentUser } from '$lib/pocketbase'
     import { goto } from '$app/navigation';
     import { onMount } from 'svelte';
@@ -51,6 +52,22 @@
             console.error(error)
         }
     }
+
+    const activate_deal_tab = () => {
+        show_business_review.set(false)
+        show_business_info.set(false)
+        show_deal.set(true)
+    }
+    const activate_business_review_tab = () => {
+        show_business_info.set(false)
+        show_deal.set(false)
+        show_business_review.set(true)
+    }
+    const activate_business_info_tab = () => {
+        show_business_review.set(false)
+        show_deal.set(false)
+        show_business_info.set(true)
+    }
 </script>
 
 <style lang="postcss">
@@ -66,7 +83,7 @@
     .tab span {
         @apply text-lg font-semibold text-splash_bg;
     }
-    .tab:first-of-type {
+    .tab.active {
         @apply border-b-4 border-splash_bg
     }
     .deals_tab_content {
@@ -155,105 +172,138 @@
 
 <section class="product_content">
     <div class="tabs">
-        <div class="tab">
-            <span>Deal</span>
-        </div>
-        <div class="tab">
-            <span>Reviews</span>
-        </div>
-        <div class="tab">
-            <span>Info</span>
-        </div>
-    </div>
-    <div class="deals_tab_content">
-        {#if Object.keys(product_obj).length > 0}
-            <div class="deal">
-                <div class="deals_img_wrapper">
-                    <img src={product_obj.stock_images[(Math.floor(Math.random() * product_obj.stock_images.length))].url} alt="deals image"/>
-                </div>
-                <h3 class="deal_title">{product_obj.product_name}</h3>
-                <div class="time_left_wrapper">
-                    <img src="/images/time.png" alt="time icon" />
-                    <span class="time_left">3 days left</span>
-                </div>
-                {#if product_obj.discount_type == 'BOGOF'}
-                    <p class="deal_description">Enjoy a free {product_obj.product_name} when a {product_obj.product_name} of equal value or greater is purchased.</p>
-                {/if}
-                {#if product_obj.discount_type == 'Percentage'}
-                    <p class="deal_description">Up to {product_obj.discount_value}% off on {product_obj.product_name} at {product_obj.expand.merchant.business_name}.</p>
-                {/if}
-                {#if $currentUser.is_subscriber}
-                    <div class="deals_option">
-                        <!-- <h4>Purchase options:</h4> -->
-                        <div class="option">
-                            <div class="option_details">
-                                <h5 class="option_title">{product_obj.product_name}</h5>
-                                <div class="pricing">
-                                    <div class="discount">
-                                        {#if product_obj.discount_type == 'Percentage'}
-                                            <span>{product_obj.discount_value}% Off</span>
-                                        {/if}
-                                    </div>
-                                    <div class="price">
-                                        {#if product_obj.discount_type == 'Percentage'}
-                                            <span class="old_price"><s>GH&#8373; {product_obj.original_price}</s></span>
-                                            <p class="new_price">GH&#8373; {product_obj.original_price - ((product_obj.original_price/100) * product_obj.discount_value)}</p>
-                                        {/if}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class={`add_btn_wrapper ${offer_added_to_user ? 'bg-splash_bg' : ''}`}>
-                                {#if offer_added_to_user}
-                                    <div class="add_btn_content bg-splash_bg" on:click={remove_offer}>
-                                        <img src="/images/remove.png" alt="remove"/>
-                                    </div>
-                                {:else}
-                                    <div class="add_btn_content" on:click={add_offer}>
-                                        <img class="mr-1.5" src="/images/add.png" alt="add "/>
-                                        <span>Add</span>
-                                    </div>
-                                {/if}
-                            </div>
-                        </div>
-                    </div>
-                {:else}
-                    <div class="deals_option my-3">
-                        <!-- <h4>Purchase options:</h4> -->
-                        <div class="option">
-                            <div class="option_details">
-                                <h5 class="option_title">{product_obj.product_name}</h5>
-                                <div class="pricing">
-                                    <div class="discount">
-                                        {#if product_obj.discount_type == 'Percentage'}
-                                            <span>{product_obj.discount_value}% Off</span>
-                                        {/if}
-                                    </div>
-                                    <div class="price">
-                                        {#if product_obj.discount_type == 'Percentage'}
-                                            <span class="old_price"><s>GH&#8373; {product_obj.original_price}</s></span>
-                                            <p class="new_price">GH&#8373; {product_obj.original_price - ((product_obj.original_price/100) * product_obj.discount_value)}</p>
-                                        {/if}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="add_btn_wrapper">
-                                <div class="add_btn_content">
-                                    <img src="/images/add.png" alt="add "/>
-                                    <span>Add</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="paywall" on:click={subscribe}>
-                            <div class="paywall_btn">
-                                <p>Subscribe to Mango</p>
-                                <div class="lock_icon">
-                                    <img src="/images/lock.png" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                {/if}
+        {#if $show_deal}
+            <div class="tab active">
+                <span>Deal</span>
+            </div>
+        {:else}
+            <div class="tab" on:click={activate_deal_tab}>
+                <span>Deal</span>
+            </div>
+        {/if}
+        {#if $show_business_review}
+            <div class="tab active">
+                <span>Reviews</span>
+            </div>
+        {:else}
+            <div class="tab" on:click={activate_business_review_tab}>
+                <span>Reviews</span>
+            </div>
+        {/if}
+        {#if $show_business_info}
+            <div class="tab active">
+                <span>Info</span>
+            </div>
+        {:else}
+            <div class="tab" on:click={activate_business_info_tab}>
+                <span>Info</span>
             </div>
         {/if}
     </div>
+
+    {#if $show_deal}
+        <div class="deals_tab_content">
+            {#if Object.keys(product_obj).length > 0}
+                <div class="deal">
+                    <div class="deals_img_wrapper">
+                        <img src={product_obj.stock_images[(Math.floor(Math.random() * product_obj.stock_images.length))].url} alt="deals image"/>
+                    </div>
+                    <h3 class="deal_title">{product_obj.product_name}</h3>
+                    <div class="time_left_wrapper">
+                        <img src="/images/time.png" alt="time icon" />
+                        <span class="time_left">3 days left</span>
+                    </div>
+                    {#if product_obj.discount_type == 'BOGOF'}
+                        <p class="deal_description">Enjoy a free {product_obj.product_name} when a {product_obj.product_name} of equal value or greater is purchased.</p>
+                    {/if}
+                    {#if product_obj.discount_type == 'Percentage'}
+                        <p class="deal_description">Up to {product_obj.discount_value}% off on {product_obj.product_name} at {product_obj.expand.merchant.business_name}.</p>
+                    {/if}
+                    {#if $currentUser != null}
+                        {#if $currentUser.is_subscriber}
+                            <div class="deals_option">
+                                <!-- <h4>Purchase options:</h4> -->
+                                <div class="option">
+                                    <div class="option_details">
+                                        <h5 class="option_title">{product_obj.product_name}</h5>
+                                        <div class="pricing">
+                                            <div class="discount">
+                                                {#if product_obj.discount_type == 'Percentage'}
+                                                    <span>{product_obj.discount_value}% Off</span>
+                                                {/if}
+                                            </div>
+                                            <div class="price">
+                                                {#if product_obj.discount_type == 'Percentage'}
+                                                    <span class="old_price"><s>GH&#8373; {product_obj.original_price}</s></span>
+                                                    <p class="new_price">GH&#8373; {product_obj.original_price - ((product_obj.original_price/100) * product_obj.discount_value)}</p>
+                                                {/if}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class={`add_btn_wrapper ${offer_added_to_user ? 'bg-splash_bg' : ''}`}>
+                                        {#if offer_added_to_user}
+                                            <div class="add_btn_content bg-splash_bg" on:click={remove_offer}>
+                                                <img src="/images/remove.png" alt="remove"/>
+                                            </div>
+                                        {:else}
+                                            <div class="add_btn_content" on:click={add_offer}>
+                                                <img class="mr-1.5" src="/images/add.png" alt="add "/>
+                                                <span>Add</span>
+                                            </div>
+                                        {/if}
+                                    </div>
+                                </div>
+                            </div>
+                        {/if}
+                    {:else}
+                        <div class="deals_option my-3">
+                            <!-- <h4>Purchase options:</h4> -->
+                            <div class="option">
+                                <div class="option_details">
+                                    <h5 class="option_title">{product_obj.product_name}</h5>
+                                    <div class="pricing">
+                                        <div class="discount">
+                                            {#if product_obj.discount_type == 'Percentage'}
+                                                <span>{product_obj.discount_value}% Off</span>
+                                            {/if}
+                                        </div>
+                                        <div class="price">
+                                            {#if product_obj.discount_type == 'Percentage'}
+                                                <span class="old_price"><s>GH&#8373; {product_obj.original_price}</s></span>
+                                                <p class="new_price">GH&#8373; {product_obj.original_price - ((product_obj.original_price/100) * product_obj.discount_value)}</p>
+                                            {/if}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="add_btn_wrapper">
+                                    <div class="add_btn_content">
+                                        <img src="/images/add.png" alt="add "/>
+                                        <span>Add</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="paywall" on:click={subscribe}>
+                                <div class="paywall_btn">
+                                    <p>Subscribe to Mango</p>
+                                    <div class="lock_icon">
+                                        <img src="/images/lock.png" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {/if}
+                </div>
+            {/if}
+        </div>
+    {/if}
+    {#if $show_business_review}
+        <div class="business_review_tab_content">
+
+        </div>
+    {/if}
+    {#if $show_business_info}
+        <div class="business_info_tab_content">
+
+        </div>
+    {/if}
 </section>

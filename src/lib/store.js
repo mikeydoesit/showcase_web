@@ -9,6 +9,7 @@ export const show_registration_page_five = writable(false)
 
 export const show_login = writable(false)
 
+export const registration_avatar_uploader_input = writable([])
 export const registration_email = writable('')
 export const registration_name = writable('')
 export const registration_password = writable('')
@@ -33,8 +34,8 @@ export const payment_method = writable('momo')
 
 export const submitting_new_user = writable(false)
 export const logging_in = writable(false)
-// export const gateway_provider = writable('visa')
-// export const cc_number = writable('')
-// export const cc_number_to_display = writable([])
-// export const secure_code = writable('')
-// export const expiry_date = writable('')
+
+
+export const show_deal = writable(true)
+export const show_business_review = writable(false)
+export const show_business_info = writable(false)

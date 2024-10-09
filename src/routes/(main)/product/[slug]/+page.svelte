@@ -12,6 +12,7 @@
     let users_offers = []
     let offer_added
 
+    console.log($currentUser)
     
     onMount(async () => {
         const record = await pocketbase.collection('campaigns').getOne(item, {
@@ -22,15 +23,17 @@
         seller = record.expand.merchant
         product_img = product.stock_images[(Math.floor(Math.random() * product.stock_images.length))].url
 
-        if($currentUser.offers === null || $currentUser.offers === 1) {
-            users_offers = []
-        } else {
-            users_offers = $currentUser.offers
-        }
+        if($currentUser != null) {
+            if($currentUser.offers === null || $currentUser.offers === 1) {
+                users_offers = []
+            } else {
+                users_offers = $currentUser.offers
+            }
 
-        offer_added = users_offers.some((product) => {
-            return product.id === item
-        });
+            offer_added = users_offers.some((product) => {
+                return product.id === item
+            });
+        }
     })
 </script>
 

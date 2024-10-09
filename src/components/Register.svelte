@@ -1,7 +1,7 @@
 <script>
 	import { slide, fade } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
-    import { show_registration, registration_email, registration_name, registration_password, registration_number, show_registration_page_one, show_registration_page_two, show_registration_page_three, show_registration_page_four, show_registration_page_five, mobile_money_number, mobile_money_network, payment_method, term_length, submitting_new_user } from '$lib/store.js';
+    import { show_registration, registration_email, registration_name, registration_password, registration_number, show_registration_page_one, show_registration_page_two, show_registration_page_three, show_registration_page_four, show_registration_page_five, mobile_money_number, mobile_money_network, payment_method, term_length, submitting_new_user, registration_avatar_uploader_input } from '$lib/store.js';
     import { imask } from '@imask/svelte';
 
     export let submit_new_user;
@@ -19,6 +19,8 @@
     let show_name_error = false
     let show_pwd_error = false
     let show_number_error = false
+
+    let registration_avatar_preview_url
 
     // let show_cc_number_error = false
     // let show_expiry_date_error = false
@@ -77,6 +79,10 @@
         show_registration_page_five.set(true)
     }
 
+    const set_avatar = (e) => {
+        registration_avatar_uploader_input.set(e.target.files)
+        registration_avatar_preview_url = URL.createObjectURL($registration_avatar_uploader_input[0])
+    }
     const set_name = (e) => {
         registration_name.set(e.target.value)
         if ($registration_name.length < 3) {
@@ -201,8 +207,17 @@
     @apply h-0 w-0 opacity-0;
 }
 .img_upload {
-    @apply rounded-full border-[3px] border-splash_bg/40 inline-flex p-3;
+    @apply rounded-full border-[3px] border-splash_bg/40 inline-flex p-2.5 h-16 w-16;
 }
+.img_upload img {
+    @apply w-auto h-auto;
+}
+.img_uploaded {
+    @apply w-auto h-auto rounded-full;
+}
+.img_uploaded img {
+    @apply w-16 h-16 object-cover object-center rounded-full;
+} 
 .img_upload_label {
     @apply text-xs font-black text-border_grey_four/70 mt-2;
 }
@@ -573,11 +588,17 @@
                 {#if $show_registration_page_one}
                     <div class="img_upload_wrapper">
                         <label for="img_upload" class="img_uploader">
-                            <div class="img_upload">
-                                <img src="/images/camera.png" alt="upload" />
-                            </div>
+                                {#if $registration_avatar_uploader_input.length > 0}
+                                    <div class="img_uploaded">
+                                        <img src={registration_avatar_preview_url} alt="avatar" />
+                                    </div>
+                                {:else}
+                                    <div class="img_upload">
+                                        <img src="/images/camera.png" alt="upload" />
+                                    </div>
+                                {/if}
                         </label>
-                        <input id="img_upload" type="file" />
+                        <input id="img_upload" accept="jpg/jpeg/png" type="file" on:input={set_avatar} />
                         <span class="img_upload_label">Upload picture</span>
                     </div>
                 {/if}

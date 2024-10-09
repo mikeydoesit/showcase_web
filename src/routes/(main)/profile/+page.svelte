@@ -7,7 +7,7 @@
     import AvatarUploader from '../../../components/AvatarUploader.svelte'
     import { onMount } from 'svelte'
     import { goto } from '$app/navigation';
-    import { show_registration, show_login, registration_email, registration_name, registration_password, show_avatar_uploader_form, avatar_uploader_input, mobile_money_network, mobile_money_number, term_length, payment_method, submitting_new_user, show_registration_page_one, show_registration_page_two, show_registration_page_three, show_registration_page_four, show_registration_page_five, logging_in } from '$lib/store'
+    import { show_registration, show_login, registration_email, registration_name, registration_password, show_avatar_uploader_form, avatar_uploader_input, mobile_money_network, mobile_money_number, term_length, payment_method, submitting_new_user, show_registration_page_one, show_registration_page_two, show_registration_page_three, show_registration_page_four, show_registration_page_five, logging_in, registration_avatar_uploader_input } from '$lib/store'
     import { pocketbase, currentUser } from '$lib/pocketbase.js'
 
     let popup
@@ -22,6 +22,7 @@
     let unauthorised = true
 
     const userData = new FormData()
+    const add_avatar = new FormData()
 
     const show_registration_form = () => {
         show_registration.set(true)
@@ -53,11 +54,22 @@
                 $registration_email,
                 $registration_password,
             );
+            if($registration_avatar_uploader_input.length > 0) {
+                try {
+                    for (let file of $registration_avatar_uploader_input) {
+                        add_avatar.append('avatar', file);
+                    }
+                    const avatar_update = await pocketbase.collection('users').update(authData.record.id, add_avatar);
+                } catch(error) {
+                    console.log(error)
+                }
+            }
 
         } catch (error) {
             console.log(error)
         } finally {
             logging_in.set(false)
+            submitting_new_user.set(false)
             show_registration.set(false)
             show_login.set(false)
             show_registration_page_three.set(false)
@@ -68,6 +80,7 @@
             registration_email.set('')
             registration_name.set('')
             registration_password.set('')
+            registration_avatar_uploader_input.set([])
             mobile_money_network.set('mtn')
             mobile_money_number.set('')
             term_length.set('monthly')
@@ -150,8 +163,10 @@
                     try {
                         // Subscribe to changes in any users record
                         await pocketbase.collection('users').subscribe(`*`, function (e) {
-                            if(e.record.email == $registration_email && e.record.is_subscriber) {
+                            if (e.record.email == $registration_email && e.record.is_subscriber) {
                                 submitting_new_user.set(false)
+                                show_registration.set(false)
+                                show_login.set(false)
                                 login()
                             }
                         });
