@@ -3,12 +3,12 @@
     import FilterToggle from "../../../../components/FilterToggle.svelte";
     import FilterCard from "../../../../components/FilterCard.svelte";
     import FullWidthOfferCard from '../../../../components/FullWidthOfferCard.svelte'
+    import { show_filter_card } from '$lib/store.js'
     import { page } from '$app/stores';
     import { onMount } from  'svelte';
     import { pocketbase } from '$lib/pocketbase.js'
 
     let title
-    let show_filter_card = false
     let capitalised
     let results
 
@@ -24,7 +24,7 @@
     }
 
     const toggle_filter_card = () => {
-        show_filter_card = !show_filter_card
+        show_filter_card.set(!$show_filter_card)
     }
 
     // onMount(async () => {
@@ -47,11 +47,81 @@
 
 <style lang="postcss">
     .category_page_main {
-        @apply relative bg-main_bg h-full w-full mb-16;
-    };
+        @apply relative bg-main_bg w-full;
+    }; 
+    
+    /* LOADER STYLES */
+
+    .loader_wrapper {
+        @apply h-60 w-full flex justify-center items-center;
+    }
+    .spinner {
+        --size: 30px;
+        --first-block-clr: #990033;
+        --second-block-clr: #FF9000;
+        --clr: #111;
+        width: 100px;
+        height: 100px;
+        position: relative;
+    }
+
+    .spinner::after,.spinner::before {
+        box-sizing: border-box;
+        position: absolute;
+        content: "";
+        width: var(--size);
+        height: var(--size);
+        top: 50%;
+        animation: up 2.4s cubic-bezier(0, 0, 0.24, 1.21) infinite;
+        left: 50%;
+        background: var(--first-block-clr);
+    }
+
+    .spinner::after {
+        background: var(--second-block-clr);
+        top: calc(50% - var(--size));
+        left: calc(50% - var(--size));
+        animation: down 2.4s cubic-bezier(0, 0, 0.24, 1.21) infinite;
+    }
+
+    @keyframes down {
+        0%, 100% {
+            transform: none;
+        }
+
+        25% {
+            transform: translateX(100%);
+        }
+
+        50% {
+            transform: translateX(100%) translateY(100%);
+        }
+
+        75% {
+            transform: translateY(100%);
+        }
+    }
+
+    @keyframes up {
+        0%, 100% {
+            transform: none;
+        }
+
+        25% {
+            transform: translateX(-100%);
+        }
+
+        50% {
+            transform: translateX(-100%) translateY(-100%);
+        }
+
+        75% {
+            transform: translateY(-100%);
+        }
+    }
 </style>
 
-<main class="category_page_main">
+<main class={`category_page_main ${$show_filter_card ? "mb-0 h-screen overflow-y-hidden" : "mb-16 h-full"}`}>
     <PageTitle 
         back_btn={true}
         page_title={title}
@@ -60,7 +130,9 @@
         action={toggle_filter_card}
     />
     {#await get_offer_list()}
-        <p>loading...</p>
+        <div class="loader_wrapper">
+            <div class="spinner"></div>
+        </div>
     {:then results} 
         {#each results as item}
             <FullWidthOfferCard
@@ -77,7 +149,7 @@
             />
         {/each}
     {/await}
-    {#if show_filter_card}
+    {#if $show_filter_card}
         <FilterCard
             hide_element={toggle_filter_card}
         />

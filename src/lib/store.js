@@ -39,3 +39,6 @@ export const logging_in = writable(false)
 export const show_deal = writable(true)
 export const show_business_review = writable(false)
 export const show_business_info = writable(false)
+
+export const show_filter_card = writable(false)
+export const show_category_filter_list = writable(false)
