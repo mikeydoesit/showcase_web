@@ -3,7 +3,7 @@
     import FilterToggle from "../../../../components/FilterToggle.svelte";
     import FilterCard from "../../../../components/FilterCard.svelte";
     import FullWidthOfferCard from '../../../../components/FullWidthOfferCard.svelte'
-    import { show_filter_card } from '$lib/store.js'
+    import { show_filter_card, category_filter } from '$lib/store.js'
     import { page } from '$app/stores';
     import { onMount } from  'svelte';
     import { pocketbase } from '$lib/pocketbase.js'
@@ -11,7 +11,9 @@
     let title
     let capitalised
     let results
+    let price_threshold = "";
 
+    // console.log($page)
     if($page.params.slug.includes('-')){
         title = $page.params.slug.split('-').join(' ')
         capitalised = title.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
@@ -21,6 +23,24 @@
     } else {
         title = $page.params.slug
         capitalised = title.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    }
+
+    console.log($page.url.searchParams.get('price_threshold'))
+
+    if($page.url.searchParams.get('price_threshold') != null) {
+        if ($page.url.searchParams.get('price_threshold') == 'up_to_20') {
+            price_threshold = ' && original_price <= 20'
+        } else if ($page.url.searchParams.get('price_threshold') == '20_50') {
+            price_threshold = ' && original_price >= 20 && original_price <= 50'
+        } else if ($page.url.searchParams.get('price_threshold') == '50_100') {
+            price_threshold = ' && original_price >= 50 && original_price <= 100'
+        } else if ($page.url.searchParams.get('price_threshold') == '100_200') {
+            price_threshold = ' && original_price >= 100 && original_price <= 200'
+        } else if ($page.url.searchParams.get('price_threshold') == '200+') {
+            price_threshold = ' && original_price >= 200'
+        } else {
+            price_threshold = '';
+        }
     }
 
     const toggle_filter_card = () => {
@@ -33,7 +53,7 @@
     const get_offer_list = async () => {
         try {
             const resultList = await pocketbase.collection('campaigns').getList(1, 50, {
-                filter: `parent_category = "${capitalised}" && is_active = True`,
+                filter: `parent_category = "${capitalised}" && is_active = True ${price_threshold != null ? price_threshold : ""}`,
                 expand: 'merchant'
             });
             console.log(resultList)
@@ -43,6 +63,7 @@
             console.log(error)
         }
     }
+    category_filter.set($page.params.slug)
 </script>
 
 <style lang="postcss">

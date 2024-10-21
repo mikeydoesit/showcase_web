@@ -42,3 +42,7 @@ export const show_business_info = writable(false)
 
 export const show_filter_card = writable(false)
 export const show_category_filter_list = writable(false)
+export const show_price_filter_list = writable(false)
+
+export const category_filter = writable('')
+export const bracket_filter = writable('')
