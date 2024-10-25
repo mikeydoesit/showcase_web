@@ -1,4 +1,4 @@
-<script>
+<!-- <script>
     import FullWidthOfferCard from "../../../components/FullWidthOfferCard.svelte";
 </script>
 
@@ -12,4 +12,4 @@
     {#each Array(7) as _}
         <FullWidthOfferCard />
     {/each}
-</main>
+</main> -->

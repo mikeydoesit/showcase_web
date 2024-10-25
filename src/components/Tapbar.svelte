@@ -43,7 +43,7 @@
                 <img src="/images/categories.png" alt="offers icon" />
             </a>
         {/if}
-        {#if $page.url.pathname.startsWith('/wishlist')}
+        <!-- {#if $page.url.pathname.startsWith('/wishlist')}
             <a href="/wishlist" class="menuItem second_item">
                 <img src="/images/heart_active.png" alt="wishlist icon" />
             </a>
@@ -51,7 +51,7 @@
             <a href="/wishlist" class="menuItem second_item">
                 <img src="/images/heart.png" alt="wishlist icon" />
             </a>
-        {/if}
+        {/if} -->
         {#if $page.url.pathname.startsWith('/my-offers')}
             <a href="/my-offers" class="menuItem fourth_item">
                 <img src="/images/offers_active.png" alt="offers icon" />
