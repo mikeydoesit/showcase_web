@@ -1,5 +1,6 @@
 <script>
     import { onMount } from 'svelte'
+    import Categories from "$lib/data/Categories.js"
 
     export let campaign_img = ''
 
@@ -56,7 +57,7 @@
             <div class="slide_bg_gradient_two"></div>
             <div class="slide_content">
                 {#if Object.keys(featured_campaign).length > 0}
-                    <h2 class="offer_title">Buckle up for laughs!<br/>The fun starts now.</h2>
+                    <h2 class="offer_title">{@html Categories.find(item => item.name == featured_campaign.parent_category)?.slogan}</h2>
                     <div class="offer_summary">
                         {#if featured_campaign.discount_type == 'BOGOF'}
                             <p class="offer_desc">Enjoy a free {featured_campaign.product_name} when a {featured_campaign.product_name} of equal value or greater is purchased.</p>

@@ -35,7 +35,7 @@
 
 <style lang="postcss">
     .home_main {
-        @apply bg-main_bg h-full w-full mb-16;
+        @apply bg-main_bg h-full w-full mb-20;
     }
 </style>
 
@@ -56,7 +56,7 @@
         link_url={'#'}
     />
     <SectionTitle
-        title_text={'Popular on Showcase'}
+        title_text={'Bestsellers'}
     />
     <HomepageOfferCardsNarrow 
         campaign_list={records}
