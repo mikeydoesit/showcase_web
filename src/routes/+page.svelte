@@ -18,7 +18,7 @@
                 show_loader = false
                 window.sessionStorage.setItem('visitState', '1')
 				window.location.replace('/home')
-            }, 10000)
+            }, 12000)
         }
 	})
 </script>
@@ -27,8 +27,17 @@
 	.splash_page {
 		@apply h-dvh w-full bg-gradient-to-t from-highlight_bg to-splash_bg to-45% flex justify-center items-center flex-col relative;
 	}
+	.title {
+		@apply flex flex-row;
+	}
 	h1 {
-		@apply text-white text-5xl font-delap tracking-widest mb-6;
+		@apply text-white text-5xl font-montserrat tracking-tight mb-6;
+		color: transparent;
+		text-shadow:
+		-1px -1px 0 #fff,  
+			1px -1px 0 #fff,
+			-1px 1px 0 #fff,
+			1px 1px 0 #fff;
 	}
 	/* HTML: <div class="loader"></div> */
 	.loader {
@@ -54,11 +63,57 @@
 	@keyframes loading_bar {
 		50% {left:100%;transform: translateX(calc(-100% - 4px))}
 	}
+
+
+
+
+	.fat {
+		font-weight: 700;
+	}
+	.mask {
+		overflow: hidden;
+	}
+
+	.reveal-to-right {
+		transform: translateX(-100%);
+		animation: reveal-to-right 1.2s 1.8s forwards;
+	}
+
+	@keyframes reveal-to-right {
+		from {
+			transform: translateX(-100%);
+		}
+		100% {
+			transform: translateX(0);
+		}
+	}
+
+	.reveal-to-left {
+		transform: translateX(100%);
+		animation: reveal-to-left 1s 1s forwards;
+	}
+
+	@keyframes reveal-to-left {
+		from {
+			transform: translateX(100%);
+		}
+		100% {
+			transform: translateX(0);
+		}
+	}
 </style>
 
 <section class="splash_page">
 	{#if show_loader}
-		<h1 transition:fade>MANGO</h1>
-		<div transition:fade class="loader"></div>
+		<!-- <h1 transition:fade>MANGO</h1> -->
+		 <div class="title">
+			<div class="mask">
+				<h1 class="text fat reveal-to-left">teso</h1>
+			</div>
+			<div class="mask">
+				<h1 class="text fat reveal-to-right">mame</h1>
+			</div>
+		 </div>
+		<!-- <div transition:fade class="loader"></div> -->
 	{/if}
 </section>

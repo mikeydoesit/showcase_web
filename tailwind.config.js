@@ -58,7 +58,8 @@ export default {
         ariadne: ["Ariadne"],
         vivaldi: ["Vivaldi"],
         delap: ["Delap"],
-        credit: ["Kredit"]
+        credit: ["Kredit"],
+        montserrat: ["Montserrat"]
       },
     },
   },

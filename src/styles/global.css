@@ -31,6 +31,10 @@
       font-family: "Kredit";
       src: url('/fonts/Kredit.otf');
     }
+    @font-face {
+      font-family: "Montserrat";
+      src: url('/fonts/Montserrat.ttf');
+    }
 }
 
 
