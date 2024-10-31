@@ -26,11 +26,11 @@
 
 <section class="filter_tabs">
     {#each filter_tabs as tab}
-        <div class="tab">
+        <a href={tab.url} class="tab">
             <h4>{tab.text}</h4>
             <div class="img_wrapper">
                 <img src={tab.img} alt={tab.text} />
             </div>
-        </div>
+        </a>
     {/each}
 </section>

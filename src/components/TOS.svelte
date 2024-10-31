@@ -53,7 +53,7 @@
         <ol class="list">
             <li class="list_item">
                 <h4 class="list_item_title">Acceptance of Terms</h4>
-                <p>By using the Mango app (the "App"), you agree to comply with and be bound by these Terms of Use ("Terms"). If you do not agree to these Terms, do not use the App.</p>
+                <p>By using the Tesomame app (the "App"), you agree to comply with and be bound by these Terms of Use ("Terms"). If you do not agree to these Terms, do not use the App.</p>
             </li>
             <li class="list_item">
                 <h4 class="list_item_title">User Accounts</h4>

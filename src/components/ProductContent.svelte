@@ -332,7 +332,7 @@
                             </div>
                             <div class="paywall" on:click={subscribe}>
                                 <div class="paywall_btn">
-                                    <p>Subscribe to Mango</p>
+                                    <p>Subscribe to Tesomame</p>
                                     <div class="lock_icon">
                                         <img src="/images/lock.png" />
                                     </div>

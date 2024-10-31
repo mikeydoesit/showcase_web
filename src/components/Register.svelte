@@ -694,7 +694,7 @@
 
                                 </div>
                                 <div class="plan_desc">
-                                    <h5 class="title">Mango  
+                                    <h5 class="title">Tesomame  
                                     {#if $term_length == "monthly"}
                                         Monthly
                                     {:else if $term_length == "quarterly"}
@@ -705,7 +705,7 @@
                                         Annual
                                     {/if}
                                     Accra Pass</h5>
-                                    <p class="desc">Enjoy complete access to Mango dicounts and offers for   
+                                    <p class="desc">Enjoy complete access to Tesomame dicounts and offers for   
                                         {#if $term_length == "monthly"}
                                             one month.
                                         {:else if $term_length == "quarterly"}

@@ -1,43 +1,53 @@
 const filter_tabs_obj = [
     {
         text: 'Newly Added',
-        img: '/images/newly_added.png'
+        img: '/images/newly_added.png',
+        url: '/category/new'
     },
     {
         text: 'Hot Deals',
-        img: '/images/hot_deals.png'
+        img: '/images/hot.png',
+        url: '/category/popular'
     },
     {
-        text: 'Premium Dining',
-        img: '/images/premium_dining.png'
+        text: 'Women\'s Fashion',
+        img: '/images/womens_fashion.png',
+        url: '/category/womens-fashion'
     },
     {
-        text: 'Casual Dining',
-        img: '/images/casual_dining.png'
+        text: 'Electronics',
+        img: '/images/electronics.png',
+        url: '/category/electronics'
     },
     {
-        text: 'Clubs & Bars',
-        img: '/images/clubs_bars.png'
+        text: 'Men\'s Fashion',
+        img: '/images/mens_fashion.png',
+        url: '/category/mens-fashion'
     },
     {
-        text: 'Takeaway',
-        img: '/images/takeaway.png'
+        text: 'Baby & Kids',
+        img: '/images/baby.png',
+        url: '/category/baby_kids'
     },
     {
         text: 'Hotels',
-        img: '/images/hotels.png'
+        img: '/images/hotels.png',
+        url: '/category/hotels'
     },
     {
-        text: 'Attractions & Leisure',
-        img: '/images/attractions_leisure.png'
+        text: 'Flights',
+        img: '/images/flights.png',
+        url: '/category/flights',
     },
     {
-        text: 'Beauty & Fitness',
-        img: '/images/beauty_fitness.png'
+        text: 'Beauty & Spas',
+        img: '/images/beauty.png',
+        url: '/category/beauty_spas'
     },
     {
-        text: 'Retail & Services',
-        img: '/images/retail_services.png'
+        text: 'Retail',
+        img: '/images/retail_services.png',
+        url: '/category/retail'
     }
 ]
 

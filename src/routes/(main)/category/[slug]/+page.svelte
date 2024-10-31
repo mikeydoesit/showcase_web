@@ -11,6 +11,7 @@
     let title
     let capitalised
     let results
+    let active_results
     let price_threshold = "";
 
     // console.log($page)
@@ -25,7 +26,6 @@
         capitalised = title.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
     }
 
-    console.log($page.url.searchParams.get('price_threshold'))
 
     if($page.url.searchParams.get('price_threshold') != null) {
         if ($page.url.searchParams.get('price_threshold') == 'up_to_20') {
@@ -56,9 +56,9 @@
                 filter: `parent_category = "${capitalised}" && is_active = True ${price_threshold != null ? price_threshold : ""}`,
                 expand: 'merchant'
             });
-            console.log(resultList)
             results = resultList.items
-            return results
+            active_results = results.filter(item => new Date(item.expiration_date) > new Date());
+            return active_results
         } catch (error) {
             console.log(error)
         }

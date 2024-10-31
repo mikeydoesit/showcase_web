@@ -1,9 +1,6 @@
 <script>
     import { page } from '$app/stores'
 
-    console.log($page.url.pathname)
-
-
 </script>
 <style lang="postcss">
     .tapbar_wrapper {

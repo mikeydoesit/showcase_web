@@ -21,8 +21,9 @@
                 expand: 'merchant'
             });
 
-            feature = records[(Math.floor(Math.random() * records.length))]
-            feature_img = feature.stock_images[(Math.floor(Math.random() * feature.stock_images.length))].url
+            const active_record = records.filter(item => new Date(item.expiration_date) > new Date());
+            feature = active_record[(Math.floor(Math.random() * active_record.length))]
+            feature_img = feature?.stock_images[(Math.floor(Math.random() * feature.stock_images.length))].url
 
 
         } catch (error) {
@@ -46,14 +47,14 @@
     />
     <HomepageFilterTabs />
     <SectionTitle
-        title_text={'Deals near you'}
+        title_text={'Deals ending soon'}
     />
     <HomepageOfferCardsWide 
         campaign_list={records}
     />
     <FullWidthLinkBtn
         link_text={'See more'}
-        link_url={'#'}
+        link_url={'/category/ending_soon'}
     />
     <SectionTitle
         title_text={'Bestsellers'}
@@ -63,6 +64,6 @@
     />
     <FullWidthLinkBtn
         link_text={'See more'}
-        link_url={'#'}
+        link_url={'/category/popular'}
     />
 </main>

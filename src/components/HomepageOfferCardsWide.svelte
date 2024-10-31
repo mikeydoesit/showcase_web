@@ -1,24 +1,36 @@
 <script>
     import { pocketbase } from '$lib/pocketbase'
     import { PUBLIC_POCKETBASE_URL } from '$env/static/public';
+	import { onMount } from 'svelte';
 
     export let campaign_list = []
 
-    // const set_campaign_list = async () => {
-    //     try {
-    //         const campaign_list = await pocketbase.collection('campaigns').getList(1, 50, {
-    //             filter: `is_active = true`,
-    //             expand: 'merchant'
-    //         })
+    const get_time_left = (expiration) => {
+        const now = new Date();
+        const expiration_date = new Date(expiration);
+        const time_diff = expiration_date - now;
 
-    //         return campaign_list.items
-            
-    //     } catch (error) {
-    //         console.log(error)
-    //     }
-    // }
+        if (time_diff <= 0) {
+            return "Expired";
+        }
+        console.log(time_diff)
+        const weeks = Math.floor(time_diff / (1000 * 60 * 60 * 24 * 7));
+        const days = Math.floor(time_diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor(time_diff / (1000 * 60 * 60));
 
-    // let get_campaign_list = set_campaign_list()
+        if (weeks >= 1) {
+            return `${weeks} week${weeks > 1 ? 's' : ''} left`;
+        } else if (days >= 1) {
+            return `${days} day${days > 1 ? 's' : ''} left`;
+        } else if (hours >= 1) {
+            return `${hours} hour${hours > 1 ? 's' : ''} left`;
+        } else {
+            return "Ending soon";
+        }
+    }
+
+    // Filter campaigns to include only non-expired ones
+    $: active_campaigns = campaign_list.filter(item => new Date(item.expiration_date) > new Date());
 </script>
 
 <style lang="postcss">
@@ -177,12 +189,12 @@
 
 </style>
 <section class="homepage_offer_cards_wide">
-    {#if campaign_list.length == 0}
+    {#if active_campaigns.length == 0}
         <div class="loader_wrapper">
             <div class="spinner"></div>
         </div>
     {:else}
-        {#each campaign_list as item}
+        {#each active_campaigns as item}
             <a href={`/product/${item.id}`} class="card">
                 <div class="card_img_wrapper">
                     <img src={item.stock_images[0].url} alt={item.product_name} />
@@ -209,7 +221,9 @@
                         <div class="offer_more_info">
                             <div class="time_left_wrapper">
                                 <img src="/images/time.png" alt="time icon" />
-                                <span class="time_left">3 days left</span>
+                                <span class="time_left">
+                                    {get_time_left(item.expiration_date)}
+                                </span>
                             </div>
                             <div class="location_wrapper">
                                 <img src="/images/location_pin.png" alt="location" />

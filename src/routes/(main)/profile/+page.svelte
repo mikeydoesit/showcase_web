@@ -238,7 +238,7 @@
             <div class="overlay"></div>
             <div class="unauthorised_landing">
                 <div class="header">
-                    <img src="/images/mango.png" alt="mango" />
+                    <img src="/images/tesomame.png" alt="logo" />
                     <h2 class="title">Discover Accra's Hidden Gems</h2>
                 </div>
                 <div class="btns_wrapper">

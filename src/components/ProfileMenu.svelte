@@ -84,7 +84,7 @@
             </div>
         </li>
         <li class="list_item" on:click={about_mango}>
-            <h6 class="list_item_title">About Mango</h6>
+            <h6 class="list_item_title">About Tesomame</h6>
             <div class="icon_wrapper">
                 <img src="/images/right_chevron.png" alt="chevron" />
             </div>

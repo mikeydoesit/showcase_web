@@ -66,7 +66,7 @@
         <ol class="list">
             <li class="list_item">
                 <h4 class="list_item_title">License Grant</h4>
-                <p>Subject to your compliance with these terms, KodeKraft grants you a limited, non-exclusive, non-transferable license to access and use the Mango web application (the "App") for personal, non-commercial use.</p>
+                <p>Subject to your compliance with these terms, KodeKraft grants you a limited, non-exclusive, non-transferable license to access and use the Tesomame web application (the "App") for personal, non-commercial use.</p>
             </li>
             <li class="list_item">
                 <h4 class="list_item_title">License Restrictions</h4>
