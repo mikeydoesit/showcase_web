@@ -5,9 +5,10 @@
     import Register from "../../../components/Register.svelte"
     import Login from "../../../components/Login.svelte"
     import AvatarUploader from '../../../components/AvatarUploader.svelte'
+    import AccountStatus from '../../../components/AccountStatus.svelte';
     import { onMount } from 'svelte'
     import { goto } from '$app/navigation';
-    import { show_registration, show_login, registration_email, registration_name, registration_password, show_avatar_uploader_form, avatar_uploader_input, mobile_money_network, mobile_money_number, term_length, payment_method, submitting_new_user, show_registration_page_one, show_registration_page_two, show_registration_page_three, show_registration_page_four, show_registration_page_five, logging_in, registration_avatar_uploader_input } from '$lib/store'
+    import { show_registration, show_login, registration_email, registration_name, registration_password, show_avatar_uploader_form, avatar_uploader_input, mobile_money_network, mobile_money_number, term_length, payment_method, submitting_new_user, show_registration_page_one, show_registration_page_two, show_registration_page_three, show_registration_page_four, show_registration_page_five, logging_in, registration_avatar_uploader_input, show_account_status } from '$lib/store'
     import { pocketbase, currentUser } from '$lib/pocketbase.js'
 
     let popup
@@ -128,11 +129,13 @@
                         });
                     } catch (error) {
                         console.error(error)
+                        submitting_new_user.set(false)
                     }
                 }
                 
             } catch (error) {
                 console.error(error)
+                submitting_new_user.set(false)
             }
         }
 
@@ -172,11 +175,13 @@
                         });
                     } catch (error) {
                         console.error(error)
+                        submitting_new_user.set(false)
                     } 
                 }
                 
             } catch (error) {
                 console.error(error)
+                submitting_new_user.set(false)
             }
         }
     }
@@ -227,6 +232,11 @@
                 {#if $show_avatar_uploader_form}
                     <AvatarUploader
                         submit_avatar={set_avatar}
+                    />
+                {/if}
+                {#if $show_account_status}
+                    <AccountStatus
+                        
                     />
                 {/if}
             </div>

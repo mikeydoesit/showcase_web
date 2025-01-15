@@ -13,7 +13,7 @@
 
 <style lang="postcss">
     .profile_heading {
-        @apply h-72 w-full flex justify-center items-center relative;
+        @apply h-[45%] w-full flex justify-center items-center relative;
     }
     .bgd_wrapper {
         @apply h-full w-full overflow-y-hidden;

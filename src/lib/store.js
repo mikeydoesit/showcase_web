@@ -19,6 +19,8 @@ export const mobile_money_network = writable('mtn')
 export const mobile_money_number = writable('')
 
 export const show_avatar_uploader_form = writable(false)
+export const show_account_status = writable(false)
+export const show_renewal_form = writable(false)
 export const show_eula = writable(false)
 export const show_tos = writable(false)
 export const avatar_uploader_input = writable([])
@@ -46,3 +48,6 @@ export const show_price_filter_list = writable(false)
 
 export const category_filter = writable('')
 export const bracket_filter = writable('')
+
+export const show_merchant_form = writable(false)
+export const show_merchant_auth_card = writable(false)

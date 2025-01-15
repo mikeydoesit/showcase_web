@@ -1,6 +1,7 @@
 <script>
     import { goto } from '$app/navigation';
     import { pocketbase } from '$lib/pocketbase.js'
+    import { show_account_status } from '$lib/store.js'
 
     const signout = () => {
         try {
@@ -14,11 +15,14 @@
     const about_mango = () => {
         goto('/about')
     }
+    const toggle_account_status = () => {
+        show_account_status.set(!$show_account_status)
+    }
 </script>
 
 <style lang="postcss">
     .profile_menu {
-        @apply mt-6 overflow-y-scroll h-fit;
+        @apply pt-6 h-[55%];
     }
     .menu_list, .secondary_menu {
         @apply px-5;
@@ -49,8 +53,14 @@
     }
 </style>
 
-<section class="profile_menu">
+<section class={`profile_menu ${$show_account_status ? "overflow-y-hidden" : "overflow-y-scroll"}`}>
     <ul class="menu_list">
+        <li class="list_item" on:click={toggle_account_status}>
+            <h6 class="list_item_title">Manage subscription</h6>
+            <div class="icon_wrapper">
+                <img src="/images/right_chevron.png" alt="chevron" />
+            </div>
+        </li>
         <li class="list_item">
             <h6 class="list_item_title">Savings</h6>
             <div class="icon_wrapper">
